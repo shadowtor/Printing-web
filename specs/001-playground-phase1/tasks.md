@@ -57,10 +57,10 @@
 - [x] T016 [P] [US1] Implement CatalogItem model and repository in `backend/src/models/catalog-item.ts`
 - [x] T017 [P] [US1] Implement ProductTemplate and Model repositories in `backend/src/models/product-template.ts`
 - [x] T018 [P] [US1] Implement PricingProfile and QuoteRule repositories in `backend/src/models/pricing.ts`
-- [ ] T019 [P] [US1] Implement Quote and Job domain models in `backend/src/models/quote.ts`
-- [ ] T020 [US1] Implement quote calculation service (pricing + feasibility + lead time) in `backend/src/services/quote-service.ts`
-- [ ] T021 [US1] Implement secure upload service (validation, storage, path safety) in `backend/src/services/upload-service.ts`
-- [ ] T022 [US1] Implement public API routes for catalog in `backend/src/api/routes/catalog.ts` (GET `/catalog/items`, GET `/catalog/items/:slug`)
+- [x] T019 [P] [US1] Implement Quote and Job domain models in `backend/src/models/quote.ts`
+- [x] T020 [US1] Implement quote calculation service (pricing + feasibility + lead time) in `backend/src/services/quote-service.ts`
+- [x] T021 [US1] Implement secure upload service (validation, storage, path safety) in `backend/src/services/upload-service.ts`
+- [x] T022 [US1] Implement public API routes for catalog in `backend/src/api/routes/catalog.ts` (GET `/catalog/items`, GET `/catalog/items/:slug`)
 - [ ] T023 [US1] Implement public API routes for upload & quote in `backend/src/api/routes/quote.ts` (POST `/upload`, POST `/quote/estimate`, POST `/quote/lock`)
 - [ ] T024 [US1] Add integration tests for upload and quote endpoints in `backend/tests/integration/quote.test.ts`
 - [ ] T025 [P] [US1] Implement storefront catalog and upload UI in `frontend/src/app/(storefront)/page.tsx`

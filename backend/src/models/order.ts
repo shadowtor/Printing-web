@@ -93,6 +93,40 @@ export async function createOrderLine(data: OrderLineCreateInput): Promise<Order
 }
 
 /**
+ * Update order (lifecycleStage and/or paymentState). Admin use.
+ */
+export async function updateOrder(
+  id: string,
+  data: { lifecycleStage?: string; paymentState?: string }
+): Promise<Order> {
+  return prisma.order.update({
+    where: { id },
+    data
+  });
+}
+
+/**
+ * List orders with optional filters. Admin use.
+ */
+export async function listOrders(params?: {
+  lifecycleStage?: string;
+  paymentState?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<Order[]> {
+  const where: { lifecycleStage?: string; paymentState?: string } = {};
+  if (params?.lifecycleStage) where.lifecycleStage = params.lifecycleStage;
+  if (params?.paymentState) where.paymentState = params.paymentState;
+  return prisma.order.findMany({
+    where,
+    include: { lines: true },
+    orderBy: { createdAt: "desc" },
+    take: params?.limit ?? 50,
+    skip: params?.offset ?? 0
+  });
+}
+
+/**
  * Update job with orderLineId after attaching to order.
  */
 export async function setJobOrderLineId(

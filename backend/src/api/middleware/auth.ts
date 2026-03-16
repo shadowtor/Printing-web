@@ -19,14 +19,21 @@ export async function registerAuthHooks(app: FastifyInstance) {
     const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
     if (!token) return;
 
-    const customerId = parseCustomerToken(token);
-    if (customerId) {
-      const customer = await getCustomerById(customerId);
-      if (customer) {
-        request.user = { id: customer.id, role: "customer" };
+    if (token.startsWith("admin:")) {
+      const secret = token.slice("admin:".length);
+      const adminSecret = process.env.ADMIN_SECRET;
+      if (adminSecret && secret === adminSecret) {
+        request.user = { id: "admin", role: "admin" };
+      }
+    } else {
+      const customerId = parseCustomerToken(token);
+      if (customerId) {
+        const customer = await getCustomerById(customerId);
+        if (customer) {
+          request.user = { id: customer.id, role: "customer" };
+        }
       }
     }
-    // Admin token format could be "admin:<id>" and resolved from admin/session store later.
   });
 }
 

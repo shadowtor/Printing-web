@@ -13,6 +13,13 @@ import { registerCustomerOrdersRoutes } from "./routes/customer-orders.js";
 import { registerOrderRequestsRoutes } from "./routes/order-requests.js";
 import { registerWorkspaceRoutes } from "./routes/workspace.js";
 import { registerGuestLinkRoutes } from "./routes/guest-link.js";
+import { registerAdminCatalogRoutes } from "./routes/admin/catalog.js";
+import { registerAdminPricingRoutes } from "./routes/admin/pricing.js";
+import { registerAdminPaymentMethodsRoutes } from "./routes/admin/payment-methods.js";
+import { registerAdminOrdersRoutes } from "./routes/admin/orders.js";
+import { registerAdminQueuesRoutes } from "./routes/admin/queues.js";
+import { registerAdminAnalyticsRoutes } from "./routes/admin/analytics.js";
+import { registerAdminOpsRoutes } from "./routes/admin/ops.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -33,6 +40,14 @@ export async function buildServer() {
   await registerOrderRequestsRoutes(app);
   await registerWorkspaceRoutes(app);
   await registerGuestLinkRoutes(app);
+
+  await registerAdminCatalogRoutes(app);
+  await registerAdminPricingRoutes(app);
+  await registerAdminPaymentMethodsRoutes(app);
+  await registerAdminOrdersRoutes(app);
+  await registerAdminQueuesRoutes(app);
+  await registerAdminAnalyticsRoutes(app);
+  await registerAdminOpsRoutes(app);
 
   return app;
 }

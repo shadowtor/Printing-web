@@ -36,6 +36,14 @@ export default async function StorefrontPage() {
         </p>
       </div>
 
+      <div className="mb-4 flex justify-end">
+        <a
+          href="/cart"
+          className="rounded border border-slate-600 px-3 py-1.5 text-sm font-medium text-slate-200 hover:bg-slate-800"
+        >
+          Cart
+        </a>
+      </div>
       <div className="grid gap-4 md:grid-cols-2">
         <a
           href="/quote"

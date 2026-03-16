@@ -62,7 +62,7 @@ describe("upload and quote routes", () => {
 
     const response = await app.inject({
       method: "POST",
-      url: "/upload",
+      url: "/api/v1/upload",
       payload: body
     });
 
@@ -81,7 +81,7 @@ describe("upload and quote routes", () => {
 
     const response = await app.inject({
       method: "POST",
-      url: "/upload",
+      url: "/api/v1/upload",
       payload: body
     });
 
@@ -106,7 +106,7 @@ describe("upload and quote routes", () => {
 
     const response = await app.inject({
       method: "POST",
-      url: "/quote/estimate",
+      url: "/api/v1/quote/estimate",
       payload: body
     });
 
@@ -132,7 +132,7 @@ describe("upload and quote routes", () => {
   it("POST /quote/estimate validates request body", async () => {
     const response = await app.inject({
       method: "POST",
-      url: "/quote/estimate",
+      url: "/api/v1/quote/estimate",
       payload: {}
     });
 
@@ -154,7 +154,7 @@ describe("upload and quote routes", () => {
 
     const estimateResponse = await app.inject({
       method: "POST",
-      url: "/quote/estimate",
+      url: "/api/v1/quote/estimate",
       payload: estimateBody
     });
 
@@ -172,7 +172,7 @@ describe("upload and quote routes", () => {
 
     const lockResponse = await app.inject({
       method: "POST",
-      url: "/quote/lock",
+      url: "/api/v1/quote/lock",
       payload: {
         quoteId: quote.id,
         validUntil

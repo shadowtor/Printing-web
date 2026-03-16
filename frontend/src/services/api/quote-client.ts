@@ -80,3 +80,33 @@ export async function requestQuoteEstimate(params: {
   return (await res.json()) as QuoteEstimateResponse;
 }
 
+export interface CreateQuoteResult {
+  quoteId: string;
+  jobIds: string[];
+  totalPrice: number;
+  currency: string;
+}
+
+export async function createQuote(params: {
+  sessionId?: string;
+  currency: string;
+  jobs: EstimateJobInput[];
+}): Promise<CreateQuoteResult> {
+  const res = await fetch(`${API_BASE}/quote/create`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params)
+  });
+  if (!res.ok) throw new Error("Create quote failed");
+  return (await res.json()) as CreateQuoteResult;
+}
+
+export async function lockQuote(quoteId: string, validUntil?: string): Promise<void> {
+  const res = await fetch(`${API_BASE}/quote/lock`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ quoteId, validUntil })
+  });
+  if (!res.ok) throw new Error("Lock quote failed");
+}
+

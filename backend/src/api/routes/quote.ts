@@ -2,7 +2,11 @@ import type { FastifyInstance } from "fastify";
 import { Readable } from "node:stream";
 
 import { saveUpload, UploadValidationError } from "../../services/upload-service.js";
-import { estimateJob, type EstimateJobInput } from "../../services/quote-service.js";
+import {
+  estimateJob,
+  createQuoteWithEstimatedJobs,
+  type EstimateJobInput
+} from "../../services/quote-service.js";
 import { lockQuote } from "../../models/quote.js";
 
 interface UploadBody {
@@ -11,6 +15,12 @@ interface UploadBody {
 }
 
 interface QuoteEstimateBody {
+  currency: string;
+  jobs: EstimateJobInput[];
+}
+
+interface QuoteCreateBody {
+  sessionId?: string;
   currency: string;
   jobs: EstimateJobInput[];
 }
@@ -31,7 +41,7 @@ export async function registerQuoteRoutes(app: FastifyInstance) {
    *   "contentBase64": "<base64-encoded file contents>"
    * }
    */
-  app.post<{ Body: UploadBody }>("/upload", async (request, reply) => {
+  app.post<{ Body: UploadBody }>("/api/v1/upload", async (request, reply) => {
     const { filename, contentBase64 } = request.body;
 
     if (!filename || !contentBase64) {
@@ -78,7 +88,7 @@ export async function registerQuoteRoutes(app: FastifyInstance) {
    *   "jobs": [EstimateJobInput, ...]
    * }
    */
-  app.post<{ Body: QuoteEstimateBody }>("/quote/estimate", async (request, reply) => {
+  app.post<{ Body: QuoteEstimateBody }>("/api/v1/quote/estimate", async (request, reply) => {
     const { currency, jobs } = request.body;
 
     if (!currency || !Array.isArray(jobs) || jobs.length === 0) {
@@ -107,6 +117,42 @@ export async function registerQuoteRoutes(app: FastifyInstance) {
   });
 
   /**
+   * POST /quote/create
+   *
+   * Create a draft quote with estimated jobs (persisted). Caller can then lock and add to cart.
+   */
+  app.post<{ Body: QuoteCreateBody }>("/api/v1/quote/create", async (request, reply) => {
+    const { sessionId, currency, jobs } = request.body;
+
+    if (!currency || !Array.isArray(jobs) || jobs.length === 0) {
+      return reply.status(400).send({
+        code: "invalid_request",
+        message: "currency and at least one job are required."
+      });
+    }
+
+    try {
+      const result = await createQuoteWithEstimatedJobs({
+        sessionId,
+        currency,
+        jobs
+      });
+      return reply.status(201).send({
+        quoteId: result.quoteId,
+        jobIds: result.jobIds,
+        totalPrice: result.totalPrice,
+        currency
+      });
+    } catch (error) {
+      request.log.error({ err: error }, "Error creating quote");
+      return reply.status(500).send({
+        code: "create_quote_error",
+        message: "Failed to create quote."
+      });
+    }
+  });
+
+  /**
    * POST /quote/lock
    *
    * Lock an existing quote so pricing becomes immutable.
@@ -117,7 +163,7 @@ export async function registerQuoteRoutes(app: FastifyInstance) {
    *   "validUntil": "2026-03-31T00:00:00.000Z" // optional ISO string
    * }
    */
-  app.post<{ Body: QuoteLockBody }>("/quote/lock", async (request, reply) => {
+  app.post<{ Body: QuoteLockBody }>("/api/v1/quote/lock", async (request, reply) => {
     const { quoteId, validUntil } = request.body;
 
     if (!quoteId) {

@@ -2,20 +2,39 @@
 
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   uploadFiles,
   requestQuoteEstimate,
+  createQuote,
+  lockQuote,
   type QuoteEstimateResponse,
   type EstimateJobInput
 } from "../../../services/api/quote-client";
+import {
+  addCartLine,
+  getSessionId
+} from "../../../services/api/checkout-client";
+
+const DEFAULT_JOB: EstimateJobInput = {
+  pricingProfileId: "default-pricing-profile",
+  materialId: "pla",
+  qualityId: "standard",
+  toleranceClassId: "general",
+  quantity: 1,
+  turnaroundProfileId: "standard"
+};
 
 export default function QuotePage() {
+  const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [quote, setQuote] = useState<QuoteEstimateResponse | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [nextStepMessage, setNextStepMessage] = useState<string | null>(null);
+  const [addingToCart, setAddingToCart] = useState(false);
 
   function onFilesChange(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files) return;
@@ -34,12 +53,8 @@ export default function QuotePage() {
       await uploadFiles(files); // For now we do not send fileKeys to the quote API.
 
       const job: EstimateJobInput = {
-        pricingProfileId: "default-pricing-profile",
-        materialId: "pla",
-        qualityId: "standard",
-        toleranceClassId: "general",
-        quantity,
-        turnaroundProfileId: "standard"
+        ...DEFAULT_JOB,
+        quantity
       };
 
       const estimate = await requestQuoteEstimate({
@@ -115,26 +130,47 @@ export default function QuotePage() {
             <>
               <button
                 type="button"
-                onClick={() =>
-                  setNextStepMessage(
-                    "Add-to-cart will be wired once the cart backend (US2) is implemented."
-                  )
-                }
-                className="inline-flex items-center rounded border border-emerald-500 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/10"
+                disabled={addingToCart}
+                onClick={async () => {
+                  setAddingToCart(true);
+                  setError(null);
+                  setNextStepMessage(null);
+                  try {
+                    const sessionId = getSessionId();
+                    const job: EstimateJobInput = { ...DEFAULT_JOB, quantity };
+                    const created = await createQuote({
+                      sessionId,
+                      currency: quote.currency,
+                      jobs: [job]
+                    });
+                    await lockQuote(created.quoteId);
+                    const jobId = created.jobIds[0];
+                    if (jobId) {
+                      await addCartLine({
+                        quoteId: created.quoteId,
+                        jobId,
+                        quantity
+                      });
+                      router.push("/cart");
+                    } else {
+                      setNextStepMessage("No job to add to cart.");
+                    }
+                  } catch (err) {
+                    setError(err instanceof Error ? err.message : "Add to cart failed");
+                  } finally {
+                    setAddingToCart(false);
+                  }
+                }}
+                className="inline-flex items-center rounded border border-emerald-500 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50"
               >
-                Add to cart
+                {addingToCart ? "Adding…" : "Add to cart"}
               </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setNextStepMessage(
-                    "Continue to checkout/registration will be wired in later user stories."
-                  )
-                }
+              <Link
+                href="/checkout"
                 className="inline-flex items-center rounded border border-slate-600 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800/60"
               >
-                Continue
-              </button>
+                Continue to checkout
+              </Link>
             </>
           )}
         </div>
@@ -169,8 +205,7 @@ export default function QuotePage() {
             ))}
           </ul>
           <div className="mt-2 text-xs text-slate-400">
-            Add-to-cart and account flows will be wired next; this page focuses on the instant
-            quote experience.
+            Use &quot;Add to cart&quot; to add this quote to your cart, or continue to checkout.
           </div>
         </div>
       )}

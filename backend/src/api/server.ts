@@ -5,6 +5,9 @@ import { registerAuthHooks } from "./middleware/auth.js";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerCatalogRoutes } from "./routes/catalog.js";
 import { registerQuoteRoutes } from "./routes/quote.js";
+import { registerCartRoutes } from "./routes/cart.js";
+import { registerCheckoutRoutes } from "./routes/checkout.js";
+import { registerWebhookRoutes } from "./routes/webhooks.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -17,6 +20,9 @@ export async function buildServer() {
   await registerHealthRoutes(app);
   await registerCatalogRoutes(app);
   await registerQuoteRoutes(app);
+  await registerCartRoutes(app);
+  await registerCheckoutRoutes(app);
+  await registerWebhookRoutes(app);
 
   return app;
 }

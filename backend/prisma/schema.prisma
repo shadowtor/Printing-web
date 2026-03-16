@@ -1,0 +1,307 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders Order[]
+  quotes Quote[]
+  carts  Cart[]
+}
+
+model CatalogItem {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  name             String
+  description      String
+  featured         Boolean  @default(false)
+  sortOrder        Int      @default(0)
+  active           Boolean  @default(true)
+  imageUrl         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  productTemplate  ProductTemplate? @relation(fields: [productTemplateId], references: [id])
+  productTemplateId String?
+}
+
+model ProductTemplate {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  models         Model[]
+  catalogItems   CatalogItem[]
+  pricingProfiles PricingProfile[]
+}
+
+model Model {
+  id               String   @id @default(uuid())
+  productTemplate  ProductTemplate @relation(fields: [productTemplateId], references: [id])
+  productTemplateId String
+  fileKey          String
+  format           String
+  displayName      String
+  createdAt        DateTime @default(now())
+}
+
+model Quote {
+  id         String   @id @default(uuid())
+  sessionId  String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+  status     String   // draft | locked
+  totalPrice Int
+  currency   String
+  validUntil DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  jobs Job[]
+}
+
+model Job {
+  id                 String   @id @default(uuid())
+  quote              Quote    @relation(fields: [quoteId], references: [id])
+  quoteId            String
+  orderLine          OrderLine? @relation(fields: [orderLineId], references: [id])
+  orderLineId        String?
+  materialId         String?
+  qualityId          String?
+  toleranceClassId   String?
+  quantity           Int
+  turnaroundProfileId String?
+  unitPrice          Int
+  feasibilityStatus  String?
+  leadTimeDays       Int?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  sessionId  String?
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  customerId String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  lines CartLine[]
+}
+
+model CartLine {
+  id              String @id @default(uuid())
+  cart            Cart   @relation(fields: [cartId], references: [id])
+  cartId          String
+  quoteId         String
+  jobId           String
+  quantity        Int
+  lockedUnitPrice Int
+  currency        String
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  orderNumber    String   @unique
+  customer       Customer? @relation(fields: [customerId], references: [id])
+  customerId     String?
+  guestEmail     String?
+  paymentMethod  String
+  paymentState   String
+  lifecycleStage String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  lines              OrderLine[]
+  approvalRequests   ApprovalRequest[]
+  revisionRequests   RevisionRequest[]
+  reprintRequests    ReprintRequest[]
+  auditEvents        AuditEvent[]
+  projectWorkspaces  ProjectWorkspace[]
+}
+
+model OrderLine {
+  id         String   @id @default(uuid())
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    String
+  jobId      String
+  snapshot   Json
+  quantity   Int
+  lineTotal  Int
+  createdAt  DateTime @default(now())
+
+  jobs                  Job[]
+  queueItems            ProductionQueueItem[]
+  printerAssignments    PrinterAssignmentPayload[]
+}
+
+model PricingProfile {
+  id               String   @id @default(uuid())
+  name             String
+  productTemplate  ProductTemplate? @relation(fields: [productTemplateId], references: [id])
+  productTemplateId String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  rules QuoteRule[]
+}
+
+model QuoteRule {
+  id               String   @id @default(uuid())
+  pricingProfile   PricingProfile @relation(fields: [pricingProfileId], references: [id])
+  pricingProfileId String
+  materialId       String?
+  qualityId        String?
+  toleranceClassId String?
+  turnaroundProfileId String?
+  unitPrice        Int
+  currency         String
+  feasibilityRule  String
+  leadTimeDays     Int
+  minQuantity      Int?
+  maxQuantity      Int?
+  materialRecommendations String?
+
+  @@index([pricingProfileId])
+}
+
+model PaymentMethodConfig {
+  id        String   @id @default(uuid())
+  method    String   @unique
+  enabled   Boolean  @default(false)
+  sortOrder Int      @default(0)
+  configJson Json?
+  updatedAt DateTime @updatedAt
+}
+
+model ProductionQueue {
+  id        String   @id @default(uuid())
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items ProductionQueueItem[]
+}
+
+model ProductionQueueItem {
+  id                     String   @id @default(uuid())
+  queue                  ProductionQueue @relation(fields: [queueId], references: [id])
+  queueId                String
+  orderLine              OrderLine @relation(fields: [orderLineId], references: [id])
+  orderLineId            String
+  status                 String
+  printerAssignment      PrinterAssignmentPayload? @relation(fields: [printerAssignmentId], references: [id])
+  printerAssignmentId    String?
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model ApprovalRequest {
+  id                 String   @id @default(uuid())
+  order              Order    @relation(fields: [orderId], references: [id])
+  orderId            String
+  requestedAt        DateTime @default(now())
+  dueAt              DateTime?
+  status             String
+  customerResponseAt DateTime?
+  customerNotes      String?
+  adminNotes         String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model RevisionRequest {
+  id              String   @id @default(uuid())
+  order           Order    @relation(fields: [orderId], references: [id])
+  orderId         String
+  orderLineId     String?
+  type            String
+  customerNotes   String?
+  status          String
+  fulfillmentNotes String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ReprintRequest {
+  id              String   @id @default(uuid())
+  order           Order    @relation(fields: [orderId], references: [id])
+  orderId         String
+  orderLineId     String?
+  type            String
+  customerNotes   String?
+  status          String
+  fulfillmentNotes String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ProjectWorkspace {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  comments PinnedPartComment[]
+}
+
+model PinnedPartComment {
+  id           String   @id @default(uuid())
+  workspace    ProjectWorkspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId  String?
+  orderLineId  String?
+  partIndex    Int?
+  authorId     String
+  authorType   String
+  body         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AuditEvent {
+  id         String   @id @default(uuid())
+  entityType String
+  entityId   String
+  action     String
+  actorId    String?
+  actorType  String?
+  oldValue   Json?
+  newValue   Json?
+  createdAt  DateTime @default(now())
+
+  order      Order?   @relation(fields: [orderId], references: [id])
+  orderId    String?
+
+  @@index([entityType, entityId, createdAt])
+}
+
+model PrinterAssignmentPayload {
+  id         String   @id @default(uuid())
+  orderLine  OrderLine @relation(fields: [orderLineId], references: [id])
+  orderLineId String
+  payload    Json
+  status     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  queueItems ProductionQueueItem[]
+}
+

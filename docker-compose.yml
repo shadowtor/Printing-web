@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: printing
+      POSTGRES_PASSWORD: printing
+      POSTGRES_DB: printing
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgres://printing:printing@db:5432/printing
+      NODE_ENV: development
+      PORT: 3000
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - backend
+    ports:
+      - "3001:3000"
+
+volumes:
+  db-data:
+

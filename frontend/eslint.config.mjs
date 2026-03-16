@@ -5,7 +5,7 @@ export default tseslint.config(
   eslintJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ["node_modules/", ".next/", "dist/", ".desloppify/", ".specify/", ".cursor/"],
+    ignores: ["**/node_modules/**", "**/.next/**", "**/dist/**", ".desloppify/", ".specify/", ".cursor/"],
     files: ["**/*.ts", "**/*.tsx"],
     languageOptions: {
       parser: tseslint.parser,

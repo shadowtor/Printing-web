@@ -190,8 +190,7 @@ export default function QuotePage() {
           <ul className="space-y-2 text-sm text-slate-200">
             {quote.jobs.map((job, index) => (
               <li
-                // eslint-disable-next-line react/no-array-index-key
-                key={index}
+                key={(job as { id?: string }).id ?? `job-${index}`}
                 className="rounded border border-slate-800 bg-slate-900/40 p-2"
               >
                 <div>Unit price: {job.unitPrice} {quote.currency}</div>

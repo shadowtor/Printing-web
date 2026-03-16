@@ -36,6 +36,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <a href="/account/orders" className="hover:text-emerald-400">
                 My orders
               </a>
+              <a href="/admin" className="hover:text-emerald-400">
+                Admin
+              </a>
             </nav>
           </div>
         </header>

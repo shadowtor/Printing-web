@@ -40,7 +40,7 @@ export async function registerAuthHooks(app: FastifyInstance) {
 export function requireRole(role: Role) {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     if (!request.user || request.user.role !== role) {
-      void reply.status(403).send({
+      return reply.status(403).send({
         code: "forbidden",
         message: "You do not have permission to perform this action."
       });

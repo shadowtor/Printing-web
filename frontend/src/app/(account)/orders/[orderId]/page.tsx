@@ -10,7 +10,6 @@ import {
   respondToApproval,
   createRevisionRequest,
   createReprintRequest,
-  getWorkspace,
   addWorkspaceComment
 } from "../../../../services/api/account-client";
 

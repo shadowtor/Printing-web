@@ -45,7 +45,7 @@ export default function CheckoutPage() {
         });
         setPaymentMethods(methods);
         if (methods.length > 0 && !selectedMethod) {
-          setSelectedMethod(methods[0].method);
+          setSelectedMethod(methods[0]?.method ?? "");
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load");

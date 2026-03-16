@@ -1,4 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { parseCustomerToken } from "../../services/auth-service.js";
+import { getCustomerById } from "../../models/customer.js";
 
 export type Role = "customer" | "admin";
 
@@ -12,9 +14,19 @@ declare module "fastify" {
 }
 
 export async function registerAuthHooks(app: FastifyInstance) {
-  // Placeholder auth hook – real implementation will integrate with sessions/JWT.
-  app.addHook("preHandler", async (_request: FastifyRequest, _reply: FastifyReply) => {
-    // No-op for now; future work will populate request.user from session or token.
+  app.addHook("preHandler", async (request: FastifyRequest, _reply: FastifyReply) => {
+    const authHeader = request.headers.authorization;
+    const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+    if (!token) return;
+
+    const customerId = parseCustomerToken(token);
+    if (customerId) {
+      const customer = await getCustomerById(customerId);
+      if (customer) {
+        request.user = { id: customer.id, role: "customer" };
+      }
+    }
+    // Admin token format could be "admin:<id>" and resolved from admin/session store later.
   });
 }
 

@@ -8,6 +8,11 @@ import { registerQuoteRoutes } from "./routes/quote.js";
 import { registerCartRoutes } from "./routes/cart.js";
 import { registerCheckoutRoutes } from "./routes/checkout.js";
 import { registerWebhookRoutes } from "./routes/webhooks.js";
+import { registerAuthRoutes } from "./routes/auth.js";
+import { registerCustomerOrdersRoutes } from "./routes/customer-orders.js";
+import { registerOrderRequestsRoutes } from "./routes/order-requests.js";
+import { registerWorkspaceRoutes } from "./routes/workspace.js";
+import { registerGuestLinkRoutes } from "./routes/guest-link.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -23,6 +28,11 @@ export async function buildServer() {
   await registerCartRoutes(app);
   await registerCheckoutRoutes(app);
   await registerWebhookRoutes(app);
+  await registerAuthRoutes(app);
+  await registerCustomerOrdersRoutes(app);
+  await registerOrderRequestsRoutes(app);
+  await registerWorkspaceRoutes(app);
+  await registerGuestLinkRoutes(app);
 
   return app;
 }

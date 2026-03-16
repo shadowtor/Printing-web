@@ -29,7 +29,7 @@ async function fileToBase64(file: File): Promise<string> {
   let binary = "";
   const bytes = new Uint8Array(buffer);
   for (let i = 0; i < bytes.length; i += 1) {
-    binary += String.fromCharCode(bytes[i]);
+    binary += String.fromCharCode(bytes[i] ?? 0);
   }
   return btoa(binary);
 }

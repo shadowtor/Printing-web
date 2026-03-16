@@ -27,6 +27,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <a href="/quote" className="hover:text-emerald-400">
                 Instant quote
               </a>
+              <a href="/cart" className="hover:text-emerald-400">
+                Cart
+              </a>
+              <a href="/auth/login" className="hover:text-emerald-400">
+                Sign in
+              </a>
+              <a href="/account/orders" className="hover:text-emerald-400">
+                My orders
+              </a>
             </nav>
           </div>
         </header>

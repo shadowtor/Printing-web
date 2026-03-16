@@ -3,3 +3,6 @@
 
 # Cursor IDE rules and config
 .cursor/
+
+# Speckit specs and memory
+.specify/

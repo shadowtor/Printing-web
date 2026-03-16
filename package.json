@@ -1,0 +1,8 @@
+{
+  "name": "printing-web",
+  "version": "0.1.0",
+  "description": "3D Printing store + management",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js"
+}

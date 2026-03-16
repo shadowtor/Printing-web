@@ -1,0 +1,5 @@
+# Desloppify scan state and config
+.desloppify/
+
+# Cursor IDE rules and config
+.cursor/

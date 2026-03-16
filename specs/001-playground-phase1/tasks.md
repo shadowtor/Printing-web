@@ -17,12 +17,12 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create backend project structure in `backend/src/` per implementation plan
-- [ ] T002 Create frontend project structure in `frontend/src/` per implementation plan
-- [ ] T003 Initialize Node.js 24 + TypeScript configs in `backend/package.json` and `backend/tsconfig.json`
-- [ ] T004 Initialize Next.js + TypeScript frontend in `frontend/package.json` and `frontend/tsconfig.json`
-- [ ] T005 [P] Configure linting and formatting (ESLint, Prettier) for backend in `backend/eslint.config.mjs`
-- [ ] T006 [P] Configure linting and formatting (ESLint, Prettier) for frontend in `frontend/eslint.config.mjs`
+- [x] T001 Create backend project structure in `backend/src/` per implementation plan
+- [x] T002 Create frontend project structure in `frontend/src/` per implementation plan
+- [x] T003 Initialize Node.js 24 + TypeScript configs in `backend/package.json` and `backend/tsconfig.json`
+- [x] T004 Initialize Next.js + TypeScript frontend in `frontend/package.json` and `frontend/tsconfig.json`
+- [x] T005 [P] Configure linting and formatting (ESLint, Prettier) for backend in `backend/eslint.config.mjs`
+- [x] T006 [P] Configure linting and formatting (ESLint, Prettier) for frontend in `frontend/eslint.config.mjs`
 
 ---
 
@@ -32,15 +32,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T007 Setup Prisma with PostgreSQL 18 in `backend/prisma/schema.prisma` and `backend/src/db/client.ts`
-- [ ] T008 Create initial database migrations for core entities (Customer, CatalogItem, ProductTemplate, Quote, Cart, Order, OrderLine) in `backend/prisma/migrations/`
-- [ ] T009 [P] Implement configuration loading and validation (env-based secrets only) in `backend/src/config/index.ts`
-- [ ] T010 [P] Setup Fastify (or chosen framework) server with base `/api/v1` and `/api/v1/admin` routers in `backend/src/api/server.ts`
-- [ ] T011 [P] Implement global error handling and logging middleware in `backend/src/api/middleware/error-handler.ts`
-- [ ] T012 [P] Implement authentication/session framework (customer + admin roles) in `backend/src/api/middleware/auth.ts`
-- [ ] T013 Setup Docker and docker-compose services for `app` and `db` in `docker-compose.yml` and backend/frontend `Dockerfile`s
-- [ ] T014 Configure basic audit event model and persistence in `backend/src/models/audit-event.ts`
-- [ ] T015 Setup environment validation and healthcheck endpoints in `backend/src/api/routes/health.ts`
+- [x] T007 Setup Prisma with PostgreSQL 18 in `backend/prisma/schema.prisma` and `backend/src/db/client.ts`
+- [x] T008 Create initial database migrations for core entities (Customer, CatalogItem, ProductTemplate, Quote, Cart, Order, OrderLine) in `backend/prisma/migrations/`
+- [x] T009 [P] Implement configuration loading and validation (env-based secrets only) in `backend/src/config/index.ts`
+- [x] T010 [P] Setup Fastify (or chosen framework) server with base `/api/v1` and `/api/v1/admin` routers in `backend/src/api/server.ts`
+- [x] T011 [P] Implement global error handling and logging middleware in `backend/src/api/middleware/error-handler.ts`
+- [x] T012 [P] Implement authentication/session framework (customer + admin roles) in `backend/src/api/middleware/auth.ts`
+- [x] T013 Setup Docker and docker-compose services for `app` and `db` in `docker-compose.yml` and backend/frontend `Dockerfile`s
+- [x] T014 Configure basic audit event model and persistence in `backend/src/models/audit-event.ts`
+- [x] T015 Setup environment validation and healthcheck endpoints in `backend/src/api/routes/health.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -54,9 +54,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T016 [P] [US1] Implement CatalogItem model and repository in `backend/src/models/catalog-item.ts`
-- [ ] T017 [P] [US1] Implement ProductTemplate and Model repositories in `backend/src/models/product-template.ts`
-- [ ] T018 [P] [US1] Implement PricingProfile and QuoteRule repositories in `backend/src/models/pricing.ts`
+- [x] T016 [P] [US1] Implement CatalogItem model and repository in `backend/src/models/catalog-item.ts`
+- [x] T017 [P] [US1] Implement ProductTemplate and Model repositories in `backend/src/models/product-template.ts`
+- [x] T018 [P] [US1] Implement PricingProfile and QuoteRule repositories in `backend/src/models/pricing.ts`
 - [ ] T019 [P] [US1] Implement Quote and Job domain models in `backend/src/models/quote.ts`
 - [ ] T020 [US1] Implement quote calculation service (pricing + feasibility + lead time) in `backend/src/services/quote-service.ts`
 - [ ] T021 [US1] Implement secure upload service (validation, storage, path safety) in `backend/src/services/upload-service.ts`
@@ -160,6 +160,7 @@
 - [ ] T071 [P] Security hardening (headers, rate limiting, auth hardening) in `backend/src/api/server.ts` and middleware
 - [ ] T072 Run quickstart.md validation end-to-end to ensure steps remain accurate
 - [ ] T073 [P] Configure CI pipeline (e.g. GitHub Actions) to run lint, typecheck, and tests on every PR and require passing checks before merge
+- [ ] T074 [P] Add browser E2E tests with Playwright (or Browserless) in `tests/e2e/` that exercise storefront, quote, cart, checkout, and admin flows; wire into CI so new features are covered by E2E as they are added
 
 ---
 

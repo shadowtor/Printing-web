@@ -23,7 +23,6 @@ export async function start() {
     await app.listen({ port: env.PORT, host: "0.0.0.0" });
   } catch (error) {
     app.log.error(error);
-    // eslint-disable-next-line unicorn/no-process-exit
     process.exit(1);
   }
 }

@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma/client/index.js";
+import { PrismaClient } from "../../prisma/generated/prisma/client/client.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const databaseUrl = process.env.DATABASE_URL;

@@ -2,11 +2,11 @@ import eslintJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
+  { ignores: ["dist/", "node_modules/", ".desloppify/", ".specify/", ".cursor/", "prisma.config.ts", "prisma/**"] },
   eslintJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ["dist/", "node_modules/", ".desloppify/", ".specify/", ".cursor/"],
-    files: ["**/*.ts"],
+    files: ["src/**/*.ts"],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -14,7 +14,8 @@ export default tseslint.config(
       }
     },
     rules: {
-      "no-console": "warn"
+      "no-console": "warn",
+      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
     }
   }
 );

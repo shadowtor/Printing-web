@@ -61,7 +61,7 @@
 - [x] T020 [US1] Implement quote calculation service (pricing + feasibility + lead time) in `backend/src/services/quote-service.ts`
 - [x] T021 [US1] Implement secure upload service (validation, storage, path safety) in `backend/src/services/upload-service.ts`
 - [x] T022 [US1] Implement public API routes for catalog in `backend/src/api/routes/catalog.ts` (GET `/catalog/items`, GET `/catalog/items/:slug`)
-- [ ] T023 [US1] Implement public API routes for upload & quote in `backend/src/api/routes/quote.ts` (POST `/upload`, POST `/quote/estimate`, POST `/quote/lock`)
+- [x] T023 [US1] Implement public API routes for upload & quote in `backend/src/api/routes/quote.ts` (POST `/upload`, POST `/quote/estimate`, POST `/quote/lock`)
 - [ ] T024 [US1] Add integration tests for upload and quote endpoints in `backend/tests/integration/quote.test.ts`
 - [ ] T025 [P] [US1] Implement storefront catalog and upload UI in `frontend/src/app/(storefront)/page.tsx`
 - [ ] T026 [P] [US1] Implement quote configuration and results UI (options, breakdown, feasibility, recommendations) in `frontend/src/app/(storefront)/quote/page.tsx`

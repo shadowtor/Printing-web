@@ -4,6 +4,7 @@ import { registerErrorHandler } from "./middleware/error-handler.js";
 import { registerAuthHooks } from "./middleware/auth.js";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerCatalogRoutes } from "./routes/catalog.js";
+import { registerQuoteRoutes } from "./routes/quote.js";
 
 export async function buildServer() {
   const app = Fastify({
@@ -15,6 +16,7 @@ export async function buildServer() {
 
   await registerHealthRoutes(app);
   await registerCatalogRoutes(app);
+  await registerQuoteRoutes(app);
 
   return app;
 }

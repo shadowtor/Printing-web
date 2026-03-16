@@ -1,58 +1,75 @@
-export interface QuoteOptions {
-  materialId: string;
-  qualityId: string;
-  toleranceClassId: string;
+export interface EstimateJobInput {
+  pricingProfileId: string;
+  materialId?: string;
+  qualityId?: string;
+  toleranceClassId?: string;
   quantity: number;
-  turnaroundProfileId: string;
+  turnaroundProfileId?: string;
 }
 
 export interface QuoteEstimateJob {
-  jobId: string;
   unitPrice: number;
-  feasibility?: string;
-  leadTimeDays?: number;
-  materialRecommendations?: string;
+  totalPrice: number;
+  feasibilityStatus: string;
+  leadTimeDays: number;
+  materialRecommendations: string | null;
+  ruleId: string;
 }
 
 export interface QuoteEstimateResponse {
-  quoteId: string;
   jobs: QuoteEstimateJob[];
   totalPrice: number;
   currency: string;
-  validUntil?: string;
 }
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:3000/api/v1";
 
+async function fileToBase64(file: File): Promise<string> {
+  const buffer = await file.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 export async function uploadFiles(files: File[]): Promise<string[]> {
-  const form = new FormData();
+  const fileKeys: string[] = [];
+
   for (const file of files) {
-    form.append("files", file);
+    const contentBase64 = await fileToBase64(file);
+
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        filename: file.name,
+        contentBase64
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error("Upload failed");
+    }
+
+    const data = (await res.json()) as { fileKey: string };
+    fileKeys.push(data.fileKey);
   }
 
-  const res = await fetch(`${API_BASE}/upload`, {
-    method: "POST",
-    body: form
-  });
-
-  if (!res.ok) {
-    throw new Error("Upload failed");
-  }
-
-  const data = (await res.json()) as { fileKeys: string[] };
-  return data.fileKeys;
+  return fileKeys;
 }
 
 export async function requestQuoteEstimate(params: {
-  fileKeys: string[];
-  options: QuoteOptions;
+  currency: string;
+  jobs: EstimateJobInput[];
 }): Promise<QuoteEstimateResponse> {
   const res = await fetch(`${API_BASE}/quote/estimate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      fileKeys: params.fileKeys,
-      options: params.options
+      currency: params.currency,
+      jobs: params.jobs
     })
   });
 

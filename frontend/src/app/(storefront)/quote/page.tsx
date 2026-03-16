@@ -5,7 +5,8 @@ import type { ChangeEvent, FormEvent } from "react";
 import {
   uploadFiles,
   requestQuoteEstimate,
-  type QuoteEstimateResponse
+  type QuoteEstimateResponse,
+  type EstimateJobInput
 } from "../../../services/api/quote-client";
 
 export default function QuotePage() {
@@ -13,6 +14,8 @@ export default function QuotePage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [quote, setQuote] = useState<QuoteEstimateResponse | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [nextStepMessage, setNextStepMessage] = useState<string | null>(null);
 
   function onFilesChange(event: ChangeEvent<HTMLInputElement>) {
     if (!event.target.files) return;
@@ -25,18 +28,23 @@ export default function QuotePage() {
     setSubmitting(true);
     setError(null);
     setQuote(null);
+    setNextStepMessage(null);
 
     try {
-      const fileKeys = await uploadFiles(files);
+      await uploadFiles(files); // For now we do not send fileKeys to the quote API.
+
+      const job: EstimateJobInput = {
+        pricingProfileId: "default-pricing-profile",
+        materialId: "pla",
+        qualityId: "standard",
+        toleranceClassId: "general",
+        quantity,
+        turnaroundProfileId: "standard"
+      };
+
       const estimate = await requestQuoteEstimate({
-        fileKeys,
-        options: {
-          materialId: "pla",
-          qualityId: "standard",
-          toleranceClassId: "general",
-          quantity: 1,
-          turnaroundProfileId: "standard"
-        }
+        currency: "AUD",
+        jobs: [job]
       });
       setQuote(estimate);
     } catch (err) {
@@ -73,21 +81,68 @@ export default function QuotePage() {
           </p>
         </div>
 
-        {/* Placeholder for material/quality/tolerance/turnaround selectors */}
-        <div className="rounded border border-slate-800 bg-slate-900/40 p-3 text-xs text-slate-400">
-          Material, quality, tolerance, quantity, and turnaround configuration UI will be
-          wired here once option catalogs are implemented. For now, defaults are used.
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-100">
+              Quantity
+              <input
+                type="number"
+                min={1}
+                value={quantity}
+                onChange={(event) => setQuantity(Number(event.target.value) || 1)}
+                className="mt-1 block w-24 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-sm text-slate-100"
+              />
+            </label>
+          </div>
+
+          <div className="rounded border border-slate-800 bg-slate-900/40 p-3 text-xs text-slate-400">
+            Material, quality, tolerance, and turnaround are currently fixed to sensible
+            defaults. Once admin-configured option catalogs are available, this section will
+            render dynamic selectors.
+          </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting || !files.length}
-          className="inline-flex items-center rounded bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-emerald-800"
-        >
-          {submitting ? "Calculating..." : "Get estimate"}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="submit"
+            disabled={submitting || !files.length}
+            className="inline-flex items-center rounded bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-emerald-800"
+          >
+            {submitting ? "Calculating..." : "Get estimate"}
+          </button>
+
+          {quote && (
+            <>
+              <button
+                type="button"
+                onClick={() =>
+                  setNextStepMessage(
+                    "Add-to-cart will be wired once the cart backend (US2) is implemented."
+                  )
+                }
+                className="inline-flex items-center rounded border border-emerald-500 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/10"
+              >
+                Add to cart
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  setNextStepMessage(
+                    "Continue to checkout/registration will be wired in later user stories."
+                  )
+                }
+                className="inline-flex items-center rounded border border-slate-600 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800/60"
+              >
+                Continue
+              </button>
+            </>
+          )}
+        </div>
 
         {error && <p className="text-sm text-red-400">{error}</p>}
+        {nextStepMessage && !error && (
+          <p className="text-xs text-slate-300">{nextStepMessage}</p>
+        )}
       </form>
 
       {quote && (
@@ -97,14 +152,16 @@ export default function QuotePage() {
             Total: {quote.totalPrice} {quote.currency}
           </p>
           <ul className="space-y-2 text-sm text-slate-200">
-            {quote.jobs.map((job) => (
-              <li key={job.jobId} className="rounded border border-slate-800 bg-slate-900/40 p-2">
-                <div>Job: {job.jobId}</div>
+            {quote.jobs.map((job, index) => (
+              <li
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                className="rounded border border-slate-800 bg-slate-900/40 p-2"
+              >
                 <div>Unit price: {job.unitPrice} {quote.currency}</div>
-                {job.leadTimeDays !== undefined && (
-                  <div>Lead time: {job.leadTimeDays} days</div>
-                )}
-                {job.feasibility && <div>Feasibility: {job.feasibility}</div>}
+                <div>Line total: {job.totalPrice} {quote.currency}</div>
+                <div>Lead time: {job.leadTimeDays} days</div>
+                <div>Feasibility: {job.feasibilityStatus}</div>
                 {job.materialRecommendations && (
                   <div>Materials: {job.materialRecommendations}</div>
                 )}

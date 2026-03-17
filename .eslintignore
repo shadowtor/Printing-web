@@ -1,8 +1,14 @@
 node_modules/
 dist/
 build/
+.next/
+out/
+*.tsbuildinfo
 coverage/
+playwright-report/
+test-results/
 .desloppify/
 .specify/
 .cursor/
+backend/prisma/generated/
 

@@ -1,3 +1,6 @@
+import "dotenv/config";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
@@ -67,8 +70,9 @@ export async function start() {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  // Started directly with node dist/api/server.js
+const entryPath = fileURLToPath(import.meta.url);
+const scriptPath = process.argv[1] ? path.resolve(process.cwd(), process.argv[1]) : "";
+if (scriptPath === entryPath) {
   void start();
 }
 

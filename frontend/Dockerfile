@@ -5,8 +5,9 @@ WORKDIR /app
 COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
 RUN npm install
 
-COPY tsconfig.json eslint.config.mjs ./ 
+COPY tsconfig.json eslint.config.mjs next.config.mjs tailwind.config.js postcss.config.js ./
 COPY src ./src
+COPY public ./public
 
 RUN npm run build
 

@@ -3,8 +3,6 @@
 
 # Cursor IDE rules and config
 .cursor/
-# Ralph config (may contain API key)
-.cursor/ralph-config.json
 
 # Speckit specs and memory
 .specify/
@@ -30,7 +28,6 @@ blob-report/
 
 # Environment and secrets
 .env
-.env.*
 
 # OS / editor noise
 .DS_Store
@@ -47,7 +44,3 @@ storage/
 # Docker
 *.log
 docker-compose.override.yml
-
-# Ralph task / agent
-RALPH_TASK.md
-.ralph/

@@ -8,11 +8,6 @@ import {
 } from "../../services/cart-service.js";
 
 export async function registerCartRoutes(app: FastifyInstance) {
-  /**
-   * GET /api/v1/cart
-   * Get current cart for session or customer (with totals).
-   * Query: sessionId= or header/body not used; we use body for POST and query for GET.
-   */
   app.get<{ Querystring: { sessionId?: string } }>(
     "/api/v1/cart",
     async (request, reply) => {
@@ -39,11 +34,6 @@ export async function registerCartRoutes(app: FastifyInstance) {
     }
   );
 
-  /**
-   * POST /api/v1/cart/lines
-   * Add a locked quote job to cart.
-   * Body: { sessionId?, quoteId, jobId, quantity }
-   */
   app.post<{
     Body: { sessionId?: string; quoteId: string; jobId: string; quantity: number };
   }>("/api/v1/cart/lines", async (request, reply) => {
@@ -83,10 +73,6 @@ export async function registerCartRoutes(app: FastifyInstance) {
     }
   });
 
-  /**
-   * PATCH /api/v1/cart/lines/:lineId
-   * Update cart line quantity.
-   */
   app.patch<{
     Params: { lineId: string };
     Body: { quantity: number; sessionId?: string };
@@ -125,9 +111,6 @@ export async function registerCartRoutes(app: FastifyInstance) {
     }
   });
 
-  /**
-   * DELETE /api/v1/cart/lines/:lineId
-   */
   app.delete<{
     Params: { lineId: string };
     Querystring: { sessionId?: string };

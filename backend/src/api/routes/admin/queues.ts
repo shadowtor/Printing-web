@@ -133,10 +133,6 @@ export async function registerAdminQueuesRoutes(app: FastifyInstance) {
     }
   });
 
-  /**
-   * POST /api/v1/admin/orders/:orderId/lines/:orderLineId/prepare
-   * Create printer-assignment payload for an order line (trigger "prepare" for production).
-   */
   app.post<{
     Params: { orderId: string; orderLineId: string };
     Body: { printerId?: string; status?: string; [key: string]: unknown };

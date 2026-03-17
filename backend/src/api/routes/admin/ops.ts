@@ -4,16 +4,9 @@ import { requireAdmin } from "../../middleware/admin-auth.js";
 const prefix = "/api/v1/admin";
 const preHandler = [requireAdmin];
 
-const REQUIRED_ENV_VARS = [
-  "DATABASE_URL"
-  // Add others as needed, e.g. STRIPE_SECRET_KEY when required
-];
+const REQUIRED_ENV_VARS = ["DATABASE_URL"];
 
 export async function registerAdminOpsRoutes(app: FastifyInstance) {
-  /**
-   * GET /api/v1/admin/ops/env
-   * Validate required env vars (names only; values are not exposed).
-   */
   app.get(`${prefix}/ops/env`, { preHandler }, async (_request, reply) => {
     const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]?.trim());
     const present = REQUIRED_ENV_VARS.filter((key) => process.env[key]?.trim());
@@ -25,10 +18,6 @@ export async function registerAdminOpsRoutes(app: FastifyInstance) {
     });
   });
 
-  /**
-   * POST /api/v1/admin/ops/backup
-   * Stub: trigger backup (no-op for now).
-   */
   app.post(`${prefix}/ops/backup`, { preHandler }, async (_request, reply) => {
     return reply.status(202).send({
       accepted: true,

@@ -48,48 +48,47 @@ From repo root:
 
 ```bash
 docker-compose up -d db
-# Wait for PostgreSQL 18 to be ready (healthcheck)
-docker-compose up -d app
-# Optional: frontend in separate container or served by app
-# docker-compose up -d frontend
+# Wait for PostgreSQL to be ready
+docker-compose up -d backend
+# Optional: run frontend in container
+docker-compose up -d frontend
 ```
 
-Example `docker-compose.yml` (structure only; actual file in repo):
+The repo `docker-compose.yml` provides:
 
-- **db**: image `postgres:18`, port 5432, volume for data, healthcheck, env POSTGRES_USER/PASSWORD/DB.
-- **app**: build `./backend` (Dockerfile), env from `.env`, depends_on db, port 3000 (or as configured). Run as non-root user.
-- Optional **frontend**: build `./frontend` or proxy via app.
+- **db**: image `postgres:18`, port 5432, volume for data, env POSTGRES_USER/PASSWORD/DB.
+- **backend**: build `./backend`, env DATABASE_URL (and optional .env), depends_on db, port 3000.
+- **frontend**: build `./frontend`, depends_on backend, port 3001 (maps to container 3000).
 
 ---
 
 ## 4. Database migrations
 
-With app container or local Node:
+With backend container or local Node (DATABASE_URL set):
 
 ```bash
-# Inside app container or with DATABASE_URL set locally
 cd backend && npx prisma migrate deploy
-# Or for dev: npx prisma migrate dev
+# Or for dev with new migrations: npx prisma migrate dev
 ```
 
 ---
 
 ## 5. Run the app (without Docker, optional)
 
-If running backend and frontend locally (e.g. for tests):
+If running backend and frontend locally (e.g. for development):
 
 ```bash
-# Terminal 1: PostgreSQL (Docker or local)
+# Terminal 1: PostgreSQL
 docker-compose up -d db
 
-# Terminal 2: Backend
-cd backend && npm ci && npm run dev
+# Terminal 2: Backend (build then watch)
+cd backend && npm ci && npm run build && npm run dev
 
 # Terminal 3: Frontend
 cd frontend && npm ci && npm run dev
 ```
 
-Backend typically at `http://localhost:3000`; frontend at `http://localhost:3001` (or as configured). API base path `/api/v1` (public) and `/api/v1/admin` (admin).
+Backend at `http://localhost:3000` (health: `GET /health`). Frontend at `http://localhost:3000` when run alone (Next.js default) or use `npm run dev -- -p 3001` to avoid port clash. API base path `/api/v1` (public) and `/api/v1/admin` (admin).
 
 ---
 
@@ -97,19 +96,18 @@ Backend typically at `http://localhost:3000`; frontend at `http://localhost:3001
 
 - **Storefront**: Open storefront URL → browse catalog or “upload my file” → upload a small STL → set options → get quote. No login required.
 - **Checkout**: Add to cart → checkout → choose an enabled payment method (e.g. quote_request for no payment provider) → submit → see order number and confirmation.
-- **Admin**: Log in as admin → enable/disable a payment method → run environment validation (e.g. GET /api/v1/admin/health or POST /api/v1/admin/ops/validate-environment).
+- **Admin**: Open `/admin`, sign in with admin secret (value of `ADMIN_SECRET`). Then: view dashboard/analytics, run environment validation (`GET /api/v1/admin/ops/env`), or trigger backup stub (`POST /api/v1/admin/ops/backup`). Backend health: `GET http://localhost:3000/health`.
 
 ---
 
 ## 7. Tests
 
 ```bash
-cd backend && npm test          # unit + integration
-cd frontend && npm test         # unit + e2e (Playwright/Cypress)
-# Contract tests: npm run test:contract (if implemented)
+cd backend && npm test          # Vitest: unit + integration (requires DATABASE_URL)
+cd frontend && npm run typecheck && npm run build   # typecheck and build; E2E in tests/e2e (T074)
 ```
 
-Tests must run without live payment providers (mocked); use test DB or in-memory where applicable (constitution: testability).
+Backend integration tests require `DATABASE_URL`. Use a test database or CI-provided URL. Frontend E2E (Playwright) is added in task T074 and wired in CI.
 
 ---
 

@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev": "node --enable-source-maps --watch ./dist/src/api/server.js",
+    "dev:build": "npm run build && npm run dev",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json --noEmit",

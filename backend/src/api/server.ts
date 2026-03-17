@@ -1,4 +1,6 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
+import helmet from "@fastify/helmet";
 import { env } from "../config/index.js";
 import { registerErrorHandler } from "./middleware/error-handler.js";
 import { registerAuthHooks } from "./middleware/auth.js";
@@ -25,6 +27,9 @@ export async function buildServer() {
   const app = Fastify({
     logger: true
   });
+
+  await app.register(cors, { origin: true }); // allow same-origin and common dev origins; tighten for production
+  await app.register(helmet, { contentSecurityPolicy: false }); // CSP can be enabled and tuned per frontend
 
   await registerErrorHandler(app);
   await registerAuthHooks(app);

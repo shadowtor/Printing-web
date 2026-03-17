@@ -61,12 +61,12 @@
 - [x] T020 [US1] Implement quote calculation service (pricing + feasibility + lead time) in `backend/src/services/quote-service.ts`
 - [x] T021 [US1] Implement secure upload service (validation, storage, path safety) in `backend/src/services/upload-service.ts`
 - [x] T022 [US1] Implement public API routes for catalog in `backend/src/api/routes/catalog.ts` (GET `/catalog/items`, GET `/catalog/items/:slug`)
-- [x] T023 [US1] Implement public API routes for upload & quote in `backend/src/api/routes/quote.ts` (POST `/upload`, POST `/quote/estimate`, POST `/quote/lock`)
-- [ ] T024 [US1] Add integration tests for upload and quote endpoints in `backend/tests/integration/quote.test.ts`
-- [ ] T025 [P] [US1] Implement storefront catalog and upload UI in `frontend/src/app/(storefront)/page.tsx`
-- [ ] T026 [P] [US1] Implement quote configuration and results UI (options, breakdown, feasibility, recommendations) in `frontend/src/app/(storefront)/quote/page.tsx`
-- [ ] T027 [US1] Implement frontend API client for upload and quote in `frontend/src/services/api/quote-client.ts`
-- [ ] T028 [US1] Wire \"add to cart\" or \"continue\" actions from quote UI (without implementing cart/checkout yet) in `frontend/src/app/(storefront)/quote/page.tsx`
+- [x] T023 [US1] Implement public API routes for upload & quote in `backend/src/api/routes/quote.ts` (POST `/upload`, POST `/quote/estimate`, POST `/quote/create`, POST `/quote/lock`)
+- [x] T024 [US1] Add integration tests for upload and quote endpoints in `backend/tests/integration/quote.test.ts`
+- [x] T025 [P] [US1] Implement storefront catalog and upload UI in `frontend/src/app/(storefront)/page.tsx`
+- [x] T026 [P] [US1] Implement quote configuration and results UI (options, breakdown, feasibility, recommendations) in `frontend/src/app/(storefront)/quote/page.tsx`
+- [x] T027 [US1] Implement frontend API client for upload and quote in `frontend/src/services/api/quote-client.ts`
+- [x] T028 [US1] Wire \"add to cart\" or \"continue\" actions from quote UI (without implementing cart/checkout yet) in `frontend/src/app/(storefront)/quote/page.tsx`
 
 **Checkpoint**: User Story 1 functional and independently testable
 
@@ -80,19 +80,19 @@
 
 ### Implementation for User Story 2
 
-- [ ] T029 [P] [US2] Implement Cart and CartLine models and repositories in `backend/src/models/cart.ts`
-- [ ] T030 [US2] Implement cart service (add/update/remove lines, totals) in `backend/src/services/cart-service.ts`
-- [ ] T031 [US2] Implement PaymentMethodConfig model and repository in `backend/src/models/payment-method-config.ts`
-- [ ] T032 [US2] Implement checkout service (order creation, payment state handling) in `backend/src/services/checkout-service.ts`
-- [ ] T033 [US2] Implement public API routes for cart (GET `/cart`, POST `/cart/lines`, PATCH `/cart/lines/:lineId`) in `backend/src/api/routes/cart.ts`
-- [ ] T034 [US2] Implement public API routes for checkout and payment methods (GET `/checkout/payment-methods`, POST `/checkout`) in `backend/src/api/routes/checkout.ts`
-- [ ] T035 [US2] Implement Stripe and PayPal integration adapters in `backend/src/services/payments/stripe-adapter.ts` and `backend/src/services/payments/paypal-adapter.ts`
-- [ ] T036 [US2] Implement payment webhooks (POST `/webhooks/stripe`, `/webhooks/paypal`) in `backend/src/api/routes/webhooks.ts` with idempotent reconciliation
-- [ ] T037 [US2] Add integration tests for cart and checkout flows in `backend/tests/integration/checkout.test.ts`
-- [ ] T038 [P] [US2] Implement frontend cart UI (view/edit cart with pricing breakdown) in `frontend/src/app/(storefront)/cart/page.tsx`
-- [ ] T039 [P] [US2] Implement checkout UI with selectable payment methods in `frontend/src/app/(storefront)/checkout/page.tsx`
-- [ ] T040 [US2] Implement frontend API client for cart and checkout in `frontend/src/services/api/checkout-client.ts`
-- [ ] T041 [US2] Implement guest checkout reference + email capture and confirmation screens in `frontend/src/app/(storefront)/checkout/confirmation/page.tsx`
+- [x] T029 [P] [US2] Implement Cart and CartLine models and repositories in `backend/src/models/cart.ts`
+- [x] T030 [US2] Implement cart service (add/update/remove lines, totals) in `backend/src/services/cart-service.ts`
+- [x] T031 [US2] Implement PaymentMethodConfig model and repository in `backend/src/models/payment-method-config.ts`
+- [x] T032 [US2] Implement checkout service (order creation, payment state handling) in `backend/src/services/checkout-service.ts`
+- [x] T033 [US2] Implement public API routes for cart (GET `/cart`, POST `/cart/lines`, PATCH `/cart/lines/:lineId`) in `backend/src/api/routes/cart.ts`
+- [x] T034 [US2] Implement public API routes for checkout and payment methods (GET `/checkout/payment-methods`, POST `/checkout`) in `backend/src/api/routes/checkout.ts`
+- [x] T035 [US2] Implement Stripe and PayPal integration adapters in `backend/src/services/payments/stripe-adapter.ts` and `backend/src/services/payments/paypal-adapter.ts`
+- [x] T036 [US2] Implement payment webhooks (POST `/webhooks/stripe`, `/webhooks/paypal`) in `backend/src/api/routes/webhooks.ts` with idempotent reconciliation
+- [x] T037 [US2] Add integration tests for cart and checkout flows in `backend/tests/integration/checkout.test.ts`
+- [x] T038 [P] [US2] Implement frontend cart UI (view/edit cart with pricing breakdown) in `frontend/src/app/(storefront)/cart/page.tsx`
+- [x] T039 [P] [US2] Implement checkout UI with selectable payment methods in `frontend/src/app/(storefront)/checkout/page.tsx`
+- [x] T040 [US2] Implement frontend API client for cart and checkout in `frontend/src/services/api/checkout-client.ts`
+- [x] T041 [US2] Implement guest checkout reference + email capture and confirmation screens in `frontend/src/app/(storefront)/checkout/confirmation/page.tsx`
 
 **Checkpoint**: User Stories 1 and 2 both functional and independently testable
 
@@ -106,17 +106,17 @@
 
 ### Implementation for User Story 3
 
-- [ ] T042 [P] [US3] Implement Customer model and auth service (register/login) in `backend/src/services/auth-service.ts`
-- [ ] T043 [US3] Implement customer orders API (GET `/orders`, GET `/orders/:id`) in `backend/src/api/routes/customer-orders.ts`
-- [ ] T044 [US3] Implement approval, revision, and reprint request models and services in `backend/src/services/order-requests-service.ts`
-- [ ] T045 [US3] Implement approval and request APIs (GET `/orders/:orderId/approval-request`, POST `/orders/:orderId/approval-request/respond`, POST `/orders/:orderId/revision-request`, POST `/orders/:orderId/reprint-request`) in `backend/src/api/routes/order-requests.ts`
-- [ ] T046 [US3] Implement project workspace and pinned part comments models/services in `backend/src/services/workspace-service.ts`
-- [ ] T047 [US3] Implement workspace and comments API (GET `/orders/:orderId/workspace`, POST `/orders/:orderId/workspace/comments`) in `backend/src/api/routes/workspace.ts`
-- [ ] T048 [US3] Add production progress timeline computation (from OrderLifecycleStage + queue data) in `backend/src/services/order-timeline-service.ts`
-- [ ] T049 [US3] Implement customer registration/login UI in `frontend/src/app/(auth)/` pages
-- [ ] T050 [US3] Implement \"My orders\" list and detail views in `frontend/src/app/(account)/orders/` pages
-- [ ] T051 [US3] Implement frontend UI for approvals, revisions, reprints, and workspace/comments in `frontend/src/app/(account)/orders/[orderId]/` components
-- [ ] T052 [US3] Implement linking guest orders to account by email (API + UI) in `backend/src/api/routes/guest-link.ts` and `frontend/src/app/(account)/orders/link/page.tsx`
+- [x] T042 [P] [US3] Implement Customer model and auth service (register/login) in `backend/src/services/auth-service.ts`
+- [x] T043 [US3] Implement customer orders API (GET `/orders`, GET `/orders/:id`) in `backend/src/api/routes/customer-orders.ts`
+- [x] T044 [US3] Implement approval, revision, and reprint request models and services in `backend/src/services/order-requests-service.ts`
+- [x] T045 [US3] Implement approval and request APIs (GET `/orders/:orderId/approval-request`, POST `/orders/:orderId/approval-request/respond`, POST `/orders/:orderId/revision-request`, POST `/orders/:orderId/reprint-request`) in `backend/src/api/routes/order-requests.ts`
+- [x] T046 [US3] Implement project workspace and pinned part comments models/services in `backend/src/services/workspace-service.ts`
+- [x] T047 [US3] Implement workspace and comments API (GET `/orders/:orderId/workspace`, POST `/orders/:orderId/workspace/comments`) in `backend/src/api/routes/workspace.ts`
+- [x] T048 [US3] Add production progress timeline computation (from OrderLifecycleStage + queue data) in `backend/src/services/order-timeline-service.ts`
+- [x] T049 [US3] Implement customer registration/login UI in `frontend/src/app/(auth)/` pages
+- [x] T050 [US3] Implement \"My orders\" list and detail views in `frontend/src/app/(account)/orders/` pages
+- [x] T051 [US3] Implement frontend UI for approvals, revisions, reprints, and workspace/comments in `frontend/src/app/(account)/orders/[orderId]/` components
+- [x] T052 [US3] Implement linking guest orders to account by email (API + UI) in `backend/src/api/routes/guest-link.ts` and `frontend/src/app/(account)/orders/link/page.tsx`
 
 **Checkpoint**: User Stories 1–3 functional and independently testable
 
@@ -130,20 +130,20 @@
 
 ### Implementation for User Story 4
 
-- [ ] T053 [P] [US4] Implement admin auth/role checks middleware in `backend/src/api/middleware/admin-auth.ts`
-- [ ] T054 [US4] Implement admin catalog and product template APIs in `backend/src/api/routes/admin/catalog.ts`
-- [ ] T055 [US4] Implement admin pricing profile and quote rule APIs in `backend/src/api/routes/admin/pricing.ts`
-- [ ] T056 [US4] Implement admin payment method config APIs in `backend/src/api/routes/admin/payment-methods.ts`
-- [ ] T057 [US4] Implement admin orders and lifecycle APIs in `backend/src/api/routes/admin/orders.ts`
-- [ ] T058 [US4] Implement ProductionQueue and PrinterAssignmentPayload services in `backend/src/services/queue-service.ts` and `backend/src/services/printer-assignment-service.ts`
-- [ ] T059 [US4] Implement admin queue and printer-assignment APIs in `backend/src/api/routes/admin/queues.ts`
-- [ ] T060 [US4] Implement admin analytics API in `backend/src/api/routes/admin/analytics.ts`
-- [ ] T061 [US4] Implement admin backup/restore triggering and environment validation APIs in `backend/src/api/routes/admin/ops.ts`
-- [ ] T062 [US4] Implement admin UI shell and navigation in `frontend/src/app/admin/layout.tsx`
-- [ ] T063 [P] [US4] Implement admin catalog and pricing management screens in `frontend/src/app/admin/catalog/` and `frontend/src/app/admin/pricing/`
-- [ ] T064 [P] [US4] Implement admin orders and lifecycle management screens in `frontend/src/app/admin/orders/`
-- [ ] T065 [P] [US4] Implement admin queues and printer-assignment screens in `frontend/src/app/admin/queues/`
-- [ ] T066 [US4] Implement admin analytics and ops screens (backup, env validation) in `frontend/src/app/admin/analytics/` and `frontend/src/app/admin/ops/`
+- [x] T053 [P] [US4] Implement admin auth/role checks middleware in `backend/src/api/middleware/admin-auth.ts`
+- [x] T054 [US4] Implement admin catalog and product template APIs in `backend/src/api/routes/admin/catalog.ts`
+- [x] T055 [US4] Implement admin pricing profile and quote rule APIs in `backend/src/api/routes/admin/pricing.ts`
+- [x] T056 [US4] Implement admin payment method config APIs in `backend/src/api/routes/admin/payment-methods.ts`
+- [x] T057 [US4] Implement admin orders and lifecycle APIs in `backend/src/api/routes/admin/orders.ts`
+- [x] T058 [US4] Implement ProductionQueue and PrinterAssignmentPayload services in `backend/src/services/queue-service.ts` and `backend/src/services/printer-assignment-service.ts`
+- [x] T059 [US4] Implement admin queue and printer-assignment APIs in `backend/src/api/routes/admin/queues.ts`
+- [x] T060 [US4] Implement admin analytics API in `backend/src/api/routes/admin/analytics.ts`
+- [x] T061 [US4] Implement admin backup/restore triggering and environment validation APIs in `backend/src/api/routes/admin/ops.ts`
+- [x] T062 [US4] Implement admin UI shell and navigation (including admin login at `/admin/login`) in `frontend/src/app/admin/layout.tsx`
+- [x] T063 [P] [US4] Implement admin catalog and pricing management screens in `frontend/src/app/admin/catalog/` and `frontend/src/app/admin/pricing/`
+- [x] T064 [P] [US4] Implement admin orders and lifecycle management screens in `frontend/src/app/admin/orders/`
+- [x] T065 [P] [US4] Implement admin queues and printer-assignment screens in `frontend/src/app/admin/queues/`
+- [x] T066 [US4] Implement admin analytics and ops screens (backup, env validation) in `frontend/src/app/admin/analytics/` and `frontend/src/app/admin/ops/`
 
 **Checkpoint**: All four user stories functional and independently testable
 
@@ -153,14 +153,14 @@
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T067 [P] Documentation updates in `docs/` and `README.md` for setup, backup/restore, connector boundary, and non-commercial use notice
-- [ ] T068 Code cleanup and refactoring across `backend/src/` and `frontend/src/`
-- [ ] T069 Performance optimization for quote calculation (p95 < 2s) and checkout UX (typical flow < 1 minute), including profiling and fixes
-- [ ] T070 [P] Additional unit tests for core services in `backend/tests/unit/`
-- [ ] T071 [P] Security hardening (headers, rate limiting, auth hardening) in `backend/src/api/server.ts` and middleware
-- [ ] T072 Run quickstart.md validation end-to-end to ensure steps remain accurate
-- [ ] T073 [P] Configure CI pipeline (e.g. GitHub Actions) to run lint, typecheck, and tests on every PR and require passing checks before merge
-- [ ] T074 [P] Add browser E2E tests with Playwright (or Browserless) in `tests/e2e/` that exercise storefront, quote, cart, checkout, and admin flows; wire into CI so new features are covered by E2E as they are added
+- [x] T067 [P] Documentation updates in `docs/` and `README.md` for setup, backup/restore, connector boundary, and non-commercial use notice
+- [x] T068 Code cleanup and refactoring across `backend/src/` and `frontend/src/`
+- [x] T069 Performance optimization for quote calculation (p95 < 2s) and checkout UX (typical flow < 1 minute), including profiling and fixes
+- [x] T070 [P] Additional unit tests for core services in `backend/tests/unit/`
+- [x] T071 [P] Security hardening (headers, rate limiting, auth hardening) in `backend/src/api/server.ts` and middleware
+- [x] T072 Run quickstart.md validation end-to-end to ensure steps remain accurate
+- [x] T073 [P] Configure CI pipeline (e.g. GitHub Actions) to run lint, typecheck, and tests on every PR and require passing checks before merge
+- [x] T074 [P] Add browser E2E tests with Playwright (or Browserless) in `tests/e2e/` that exercise storefront, quote, cart, checkout, and admin flows; wire into CI so new features are covered by E2E as they are added
 
 ---
 
@@ -233,6 +233,7 @@ With multiple developers:
 
 ## Notes
 
+- Integration tests in `backend/tests/integration/` require `DATABASE_URL`; CI should set it when running tests (see T073).
 - Tasks MUST support constitution principles: testability, explicit error handling, auditability, Docker-first deployment, and documentation (see `.specify/memory/constitution.md`).
 - [P] tasks = different files, no dependencies
 - [Story] label maps task to specific user story for traceability

@@ -11,6 +11,7 @@ import {
   QueueServiceError
 } from "../../../services/queue-service.js";
 import { createPrinterAssignmentPayload } from "../../../services/printer-assignment-service.js";
+import { ConnectorClientError, dispatchPreparedAssignment } from "../../../services/connector-client.js";
 import { requireAdmin } from "../../middleware/admin-auth.js";
 
 const prefix = "/api/v1/admin";
@@ -159,4 +160,32 @@ export async function registerAdminQueuesRoutes(app: FastifyInstance) {
       }
     }
   );
+
+  app.post<{
+    Params: { orderId: string; orderLineId: string };
+  }>(`${prefix}/orders/:orderId/lines/:orderLineId/dispatch`, { preHandler }, async (request, reply) => {
+    const { orderLineId } = request.params;
+    try {
+      const result = await dispatchPreparedAssignment(orderLineId);
+      return reply.status(202).send(result);
+    } catch (error) {
+      if (error instanceof ConnectorClientError) {
+        const statusByCode: Record<ConnectorClientError["code"], number> = {
+          CONNECTOR_NOT_CONFIGURED: 503,
+          ASSIGNMENT_NOT_FOUND: 404,
+          CONNECTOR_REQUEST_FAILED: 502,
+          CONNECTOR_RESPONSE_INVALID: 502
+        };
+        return reply.status(statusByCode[error.code]).send({
+          code: error.code,
+          message: error.message
+        });
+      }
+      request.log.error({ err: error }, "dispatchPreparedAssignment failed");
+      return reply.status(500).send({
+        code: "dispatch_error",
+        message: "Failed to dispatch prepared assignment to connector."
+      });
+    }
+  });
 }

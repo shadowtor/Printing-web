@@ -22,6 +22,9 @@ How to install and run the Printing-web platform locally.
 | `STRIPE_WEBHOOK_SECRET` | No | Stripe webhook signing secret |
 | `PAYPAL_CLIENT_ID` | No | PayPal client ID (when PayPal is enabled) |
 | `PAYPAL_CLIENT_SECRET` | No | PayPal client secret |
+| `CONNECTOR_API_URL` | No | Base URL for the external connector service (used by admin dispatch endpoint) |
+| `CONNECTOR_API_KEY` | No | Bearer token used by backend when calling connector APIs |
+| `CONNECTOR_WEBHOOK_SECRET` | No | Shared secret for inbound connector webhooks (`Authorization: Bearer <secret>`) |
 | `UPLOAD_DIR` | No | Directory for uploaded files (defaults to app default) |
 | `MAX_UPLOAD_BYTES` | No | Max upload size in bytes |
 
@@ -122,4 +125,11 @@ cd frontend && npm run lint && npm run typecheck
 
 ## Connector boundary
 
-The application does not control printers directly. Admin “prepare” creates a **PrinterAssignmentPayload** (JSON) per order line and stores it; a separate connector service (e.g. Bambu Lab) can consume these payloads. The API does not call out to printers or third-party print services.
+The application does not control printers directly. Admin “prepare” creates a **PrinterAssignmentPayload** (JSON) per order line and stores it.
+
+When connector integration variables are configured:
+
+- `POST /api/v1/admin/orders/:orderId/lines/:orderLineId/dispatch` (admin-only) submits the latest prepared payload to the external connector service.
+- `POST /api/v1/webhooks/connector` accepts connector events using service-to-service auth with `CONNECTOR_WEBHOOK_SECRET`.
+
+Storefront/customer APIs remain unchanged. Admin and connector integration stay backend-only and authenticated.

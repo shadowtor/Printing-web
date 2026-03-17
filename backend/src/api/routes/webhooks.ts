@@ -1,8 +1,13 @@
 import type { FastifyInstance } from "fastify";
 import { verifyStripeWebhook } from "../../services/payments/stripe-adapter.js";
 import { verifyPaypalWebhook } from "../../services/payments/paypal-adapter.js";
+import { env } from "../../config/index.js";
 import prisma from "../../db/client.js";
 import { recordAuditEvent } from "../../models/audit-event.js";
+import {
+  getLatestPrinterAssignmentByOrderLineId,
+  updatePrinterAssignmentStatusById
+} from "../../services/printer-assignment-service.js";
 
 /**
  * Idempotent reconciliation: skip if we already recorded this payment intent.
@@ -91,5 +96,54 @@ export async function registerWebhookRoutes(app: FastifyInstance) {
       request.log.error({ err: error }, "PayPal webhook error");
       return reply.status(400).send({ received: false, error: "Webhook handling failed" });
     }
+  });
+
+  /**
+   * POST /api/v1/webhooks/connector
+   * Connector webhook: service-to-service auth via CONNECTOR_WEBHOOK_SECRET.
+   */
+  app.post<{
+    Body: {
+      eventType?: string;
+      orderLineId?: string;
+      status?: string;
+      connectorJobId?: string;
+      metadata?: Record<string, unknown>;
+    };
+  }>("/api/v1/webhooks/connector", async (request, reply) => {
+    const expectedSecret = env.CONNECTOR_WEBHOOK_SECRET;
+    if (!expectedSecret) {
+      return reply.status(503).send({
+        code: "connector_webhook_not_configured",
+        message: "Connector webhook secret is not configured."
+      });
+    }
+
+    const authHeader = request.headers.authorization;
+    const bearerSecret = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+    if (!bearerSecret || bearerSecret !== expectedSecret) {
+      return reply.status(401).send({ code: "unauthorized", message: "Invalid connector webhook secret." });
+    }
+
+    const eventType = request.body?.eventType ?? "unknown";
+    const orderLineId = request.body?.orderLineId;
+    const status = request.body?.status;
+
+    if (orderLineId && status) {
+      const assignment = await getLatestPrinterAssignmentByOrderLineId(orderLineId);
+      if (assignment) {
+        await updatePrinterAssignmentStatusById(assignment.id, status);
+      }
+    }
+
+    await recordAuditEvent({
+      entityType: "other",
+      entityId: request.body?.connectorJobId ?? orderLineId ?? "connector_event",
+      action: `connector_${eventType}`,
+      actorType: "system",
+      newValue: request.body
+    });
+
+    return reply.status(202).send({ received: true });
   });
 }

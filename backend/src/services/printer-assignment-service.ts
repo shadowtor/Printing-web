@@ -52,3 +52,17 @@ export async function getPrinterAssignmentsByOrderLineId(orderLineId: string) {
     orderBy: { createdAt: "desc" }
   });
 }
+
+export async function getLatestPrinterAssignmentByOrderLineId(orderLineId: string) {
+  return prisma.printerAssignmentPayload.findFirst({
+    where: { orderLineId },
+    orderBy: { createdAt: "desc" }
+  });
+}
+
+export async function updatePrinterAssignmentStatusById(id: string, status: string) {
+  return prisma.printerAssignmentPayload.update({
+    where: { id },
+    data: { status }
+  });
+}

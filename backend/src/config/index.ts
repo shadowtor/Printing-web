@@ -3,6 +3,10 @@ import { z } from "zod";
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   DATABASE_URL: z.string().url(),
+  ADMIN_SECRET: z.string().optional(),
+  CONNECTOR_API_URL: z.string().url().optional(),
+  CONNECTOR_API_KEY: z.string().optional(),
+  CONNECTOR_WEBHOOK_SECRET: z.string().optional(),
   PORT: z
     .string()
     .transform((v) => parseInt(v, 10))

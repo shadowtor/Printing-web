@@ -17,8 +17,8 @@ export default function AdminDashboardPage() {
   if (error) {
     return (
       <section className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-amber-300">{error}</p>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Dashboard</h1>
+        <p className="text-red-200">{error}</p>
       </section>
     );
   }
@@ -26,38 +26,38 @@ export default function AdminDashboardPage() {
   if (!summary) {
     return (
       <section className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="text-slate-400">Loading…</p>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Dashboard</h1>
+        <p className="text-brand-muted">Loading…</p>
       </section>
     );
   }
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+      <h1 className="font-[var(--font-heading)] text-h1 text-white">Dashboard</h1>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <p className="text-sm text-slate-400">Orders</p>
-          <p className="text-2xl font-semibold text-slate-100">{summary.orderCount}</p>
+        <div className="panel p-4">
+          <p className="text-sm text-brand-muted">Orders</p>
+          <p className="text-2xl font-semibold text-white">{summary.orderCount}</p>
         </div>
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <p className="text-sm text-slate-400">Revenue (cents)</p>
-          <p className="text-2xl font-semibold text-slate-100">{summary.totalRevenueCents}</p>
+        <div className="panel p-4">
+          <p className="text-sm text-brand-muted">Revenue (cents)</p>
+          <p className="text-2xl font-semibold text-brand-accent">{summary.totalRevenueCents}</p>
         </div>
       </div>
       <div className="flex flex-wrap gap-4">
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4 min-w-[200px]">
-          <p className="text-sm font-medium text-slate-300 mb-2">By lifecycle</p>
-          <ul className="text-sm text-slate-400 space-y-1">
+        <div className="panel-soft min-w-[220px] p-4">
+          <p className="mb-2 text-sm font-medium text-brand-text">By lifecycle</p>
+          <ul className="space-y-1 text-sm text-brand-muted">
             {Object.entries(summary.byLifecycleStage).map(([k, v]) => (
               <li key={k}>{k}: {v}</li>
             ))}
             {Object.keys(summary.byLifecycleStage).length === 0 && <li>—</li>}
           </ul>
         </div>
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4 min-w-[200px]">
-          <p className="text-sm font-medium text-slate-300 mb-2">By payment state</p>
-          <ul className="text-sm text-slate-400 space-y-1">
+        <div className="panel-soft min-w-[220px] p-4">
+          <p className="mb-2 text-sm font-medium text-brand-text">By payment state</p>
+          <ul className="space-y-1 text-sm text-brand-muted">
             {Object.entries(summary.byPaymentState).map(([k, v]) => (
               <li key={k}>{k}: {v}</li>
             ))}
@@ -66,7 +66,7 @@ export default function AdminDashboardPage() {
         </div>
       </div>
       <p>
-        <Link href="/admin/orders" className="text-emerald-400 hover:underline">
+        <Link href="/admin/orders" className="font-semibold text-brand-accent hover:text-white">
           View all orders →
         </Link>
       </p>

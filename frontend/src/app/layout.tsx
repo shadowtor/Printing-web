@@ -1,48 +1,65 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { Manrope, Sora } from "next/font/google";
 import "./globals.css";
+import { Logo } from "../components/logo";
+
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body"
+});
+
+const headingFont = Sora({
+  subsets: ["latin"],
+  variable: "--font-heading"
+});
 
 export const metadata = {
-  title: "Playground.au",
+  title: "PLAground.au",
   description: "3D printing storefront and management"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-950 text-slate-50">
-        <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <div className="flex flex-col">
-              <span className="text-sm font-semibold tracking-widest text-emerald-400">
-                PLAYGROUND.AU
-              </span>
-              <span className="text-xs text-slate-400">
-                Home 3D printing storefront & management
-              </span>
-            </div>
-            <nav className="flex items-center gap-4 text-sm text-slate-300">
-              <a href="/" className="hover:text-emerald-400">
+      <body className={`${bodyFont.variable} ${headingFont.variable} min-h-screen font-[var(--font-body)] text-brand-text`}>
+        <header className="sticky top-0 z-30 border-b border-brand-border/60 bg-brand-bg/90 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+            <Link href="/" className="flex items-center gap-3">
+              <Logo size="sm" showWordmark />
+              <div className="hidden flex-col md:flex">
+                <span className="font-[var(--font-heading)] text-caption uppercase tracking-[0.2em] text-brand-muted">
+                  Printing commerce platform
+                </span>
+                <span className="text-xs text-brand-subtle">Quote, checkout, account, and operations</span>
+              </div>
+            </Link>
+            <nav className="flex flex-wrap items-center gap-2 rounded-full border border-brand-border bg-brand-surfaceSoft/80 px-2 py-1 text-sm text-brand-muted shadow-soft-inner">
+              <Link href="/" className="rounded-full px-3 py-1.5 hover:bg-brand-primary/20 hover:text-brand-text">
                 Storefront
-              </a>
-              <a href="/quote" className="hover:text-emerald-400">
+              </Link>
+              <Link href="/quote" className="rounded-full px-3 py-1.5 hover:bg-brand-primary/20 hover:text-brand-text">
                 Instant quote
-              </a>
-              <a href="/cart" className="hover:text-emerald-400">
+              </Link>
+              <Link href="/cart" className="rounded-full px-3 py-1.5 hover:bg-brand-primary/20 hover:text-brand-text">
                 Cart
-              </a>
-              <a href="/auth/login" className="hover:text-emerald-400">
+              </Link>
+              <Link href="/login" className="rounded-full px-3 py-1.5 hover:bg-brand-primary/20 hover:text-brand-text">
                 Sign in
-              </a>
-              <a href="/account/orders" className="hover:text-emerald-400">
+              </Link>
+              <Link href="/orders" className="rounded-full px-3 py-1.5 hover:bg-brand-primary/20 hover:text-brand-text">
                 My orders
-              </a>
-              <a href="/admin" className="hover:text-emerald-400">
+              </Link>
+              <Link href="/admin" className="rounded-full bg-brand-primary px-3 py-1.5 font-semibold text-white hover:brightness-110">
                 Admin
-              </a>
+              </Link>
             </nav>
           </div>
         </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+        <div className="pointer-events-none fixed inset-0 -z-10 brand-grid-bg" />
+        <main className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
+          <div className="space-y-6">{children}</div>
+        </main>
       </body>
     </html>
   );

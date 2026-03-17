@@ -27,18 +27,18 @@ export default function AdminOrdersPage() {
   if (loading) {
     return (
       <section className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Orders</h1>
-        <p className="text-slate-400">Loading…</p>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Orders</h1>
+        <p className="text-brand-muted">Loading…</p>
       </section>
     );
   }
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Orders</h1>
-      {error && <p className="text-amber-300">{error}</p>}
+      <h1 className="font-[var(--font-heading)] text-h1 text-white">Orders</h1>
+      {error && <p className="text-red-200">{error}</p>}
       {orders.length === 0 && !error && (
-        <p className="text-slate-400">No orders.</p>
+        <p className="text-brand-muted">No orders.</p>
       )}
       {orders.length > 0 && (
         <ul className="space-y-3">
@@ -46,13 +46,13 @@ export default function AdminOrdersPage() {
             <li key={order.id}>
               <Link
                 href={`/admin/orders/${order.id}`}
-                className="block rounded-lg border border-slate-800 bg-slate-900/60 p-4 transition hover:border-slate-700"
+                className="panel-soft block p-4 transition hover:border-brand-primary/40"
               >
                 <div className="flex justify-between">
-                  <span className="font-mono font-medium text-slate-100">{order.orderNumber}</span>
-                  <span className="text-sm text-slate-400">{formatDate(order.createdAt)}</span>
+                  <span className="font-mono font-medium text-brand-text">{order.orderNumber}</span>
+                  <span className="text-sm text-brand-subtle">{formatDate(order.createdAt)}</span>
                 </div>
-                <div className="mt-1 text-sm text-slate-400">
+                <div className="mt-1 text-sm text-brand-muted">
                   {order.lifecycleStage} · {order.paymentState}
                   {order.guestEmail && ` · ${order.guestEmail}`}
                 </div>

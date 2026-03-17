@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { getAdminToken, clearAdminToken } from "../../services/api/admin-client";
+import { Logo } from "../../components/logo";
 
 const nav = [
   { href: "/admin", label: "Dashboard" },
@@ -28,57 +29,73 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }, [token, isLoginPage, router]);
 
   if (isLoginPage) {
-    return <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>;
+    return <main className="mx-auto max-w-3xl px-4 py-10">{children}</main>;
   }
   if (!token) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-8">
-        <p className="text-slate-400">Redirecting…</p>
+        <p className="text-brand-muted">Redirecting…</p>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
-        <div className="flex items-center gap-4">
-          <h1 className="text-lg font-semibold text-slate-200">Admin</h1>
-          <nav className="flex flex-wrap gap-2">
-            {nav.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`rounded px-2 py-1 text-sm ${
-                  pathname === href || (href !== "/admin" && pathname.startsWith(href + "/"))
-                    ? "bg-slate-700 text-white"
-                    : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+    <main className="mx-auto max-w-7xl px-4 py-8 md:px-6">
+      <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
+        <aside className="panel h-fit p-3">
+          <div className="mb-4 border-b border-brand-border pb-3">
+            <Logo size="md" />
+            <p className="mt-2 text-caption uppercase tracking-[0.18em] text-brand-subtle">
+              Operations
+            </p>
+          </div>
+          <nav className="space-y-1.5">
+            {nav.map(({ href, label }) => {
+              const active = pathname === href || (href !== "/admin" && pathname.startsWith(href + "/"));
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`block rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    active
+                      ? "bg-brand-primary text-white shadow-glow"
+                      : "text-brand-muted hover:bg-brand-surfaceSoft hover:text-brand-text"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link
-            href="/"
-            className="text-sm text-slate-400 hover:text-emerald-400"
-          >
-            Storefront
-          </Link>
-          <button
-            type="button"
-            onClick={() => {
-              clearAdminToken();
-              router.replace("/admin/login");
-            }}
-            className="rounded border border-slate-600 px-2 py-1 text-sm text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-          >
-            Sign out
-          </button>
-        </div>
+          <div className="mt-4 border-t border-brand-border pt-4">
+            <Link href="/" className="btn-secondary w-full justify-center">
+              Storefront
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                clearAdminToken();
+                router.replace("/admin/login");
+              }}
+              className="mt-2 w-full rounded-lg border border-brand-danger/40 bg-brand-danger/10 px-3 py-2 text-sm font-semibold text-red-200 hover:bg-brand-danger/20"
+            >
+              Sign out
+            </button>
+          </div>
+        </aside>
+        <section className="space-y-6">
+          <header className="panel flex items-center justify-between p-4">
+            <div>
+              <p className="text-caption uppercase tracking-[0.16em] text-brand-subtle">Admin panel</p>
+              <h1 className="font-[var(--font-heading)] text-h2 text-white">Production command center</h1>
+            </div>
+            <span className="rounded-full border border-brand-primary/50 bg-brand-primary/10 px-3 py-1 text-caption text-brand-muted">
+              Live
+            </span>
+          </header>
+          <div>{children}</div>
+        </section>
       </div>
-      {children}
     </main>
   );
 }

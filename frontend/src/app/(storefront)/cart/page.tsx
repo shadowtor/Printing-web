@@ -78,8 +78,8 @@ export default function CartPage() {
   if (loading && !cart) {
     return (
       <section className="space-y-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Cart</h1>
-        <p className="text-slate-400">Loading…</p>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Cart</h1>
+        <p className="text-body text-brand-muted">Loading…</p>
       </section>
     );
   }
@@ -87,27 +87,27 @@ export default function CartPage() {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Cart</h1>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Cart</h1>
         <Link
           href="/"
-          className="text-sm font-medium text-slate-300 hover:text-slate-100"
+          className="btn-secondary"
         >
           ← Storefront
         </Link>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-200">
+        <div className="rounded-panel border border-brand-danger/40 bg-brand-danger/10 p-3 text-sm text-red-200">
           {error}
         </div>
       )}
 
       {cart && cart.lines.length === 0 && (
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-6 text-center">
-          <p className="text-slate-300">Your cart is empty.</p>
+        <div className="panel p-6 text-center">
+          <p className="text-body text-brand-muted">Your cart is empty.</p>
           <Link
             href="/quote"
-            className="mt-3 inline-block text-sm font-medium text-emerald-400 hover:text-emerald-300"
+            className="btn-primary mt-3"
           >
             Get a quote and add items
           </Link>
@@ -120,19 +120,19 @@ export default function CartPage() {
             {cart.lines.map((line) => (
               <li
                 key={line.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-800 bg-slate-900/60 p-4"
+                className="panel-soft flex flex-wrap items-center justify-between gap-3 p-4"
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-slate-100">
+                  <p className="text-sm font-semibold text-brand-text">
                     Job (quote)
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-caption text-brand-subtle">
                     Qty × {formatCents(line.lockedUnitPrice)} ={" "}
                     {formatCents(line.lockedUnitPrice * line.quantity)}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center gap-1 text-sm text-slate-300">
+                  <label className="flex items-center gap-2 text-sm text-brand-muted">
                     Qty
                     <input
                       type="number"
@@ -143,14 +143,14 @@ export default function CartPage() {
                         if (!Number.isNaN(v)) onQuantityChange(line.id, v);
                       }}
                       disabled={updating === line.id}
-                      className="w-14 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100"
+                      className="form-input w-16"
                     />
                   </label>
                   <button
                     type="button"
                     onClick={() => onRemove(line.id)}
                     disabled={updating === line.id}
-                    className="rounded border border-slate-600 bg-slate-800 px-2 py-1 text-xs text-slate-300 hover:bg-slate-700 disabled:opacity-50"
+                    className="rounded-md border border-brand-border bg-brand-bg/60 px-3 py-1.5 text-caption text-brand-muted hover:text-brand-text disabled:opacity-50"
                   >
                     Remove
                   </button>
@@ -159,16 +159,16 @@ export default function CartPage() {
             ))}
           </ul>
 
-          <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
+          <div className="panel p-4">
             <div className="flex justify-between text-sm">
-              <span className="text-slate-400">Total ({cart.totalItems} items)</span>
-              <span className="font-semibold text-slate-100">
+              <span className="text-brand-muted">Total ({cart.totalItems} items)</span>
+              <span className="font-semibold text-brand-accent">
                 {formatCents(cart.totalCents)}
               </span>
             </div>
             <Link
               href="/checkout"
-              className="mt-4 block w-full rounded bg-emerald-600 py-2 text-center font-medium text-white hover:bg-emerald-500"
+              className="btn-primary mt-4 flex w-full justify-center"
             >
               Proceed to checkout
             </Link>

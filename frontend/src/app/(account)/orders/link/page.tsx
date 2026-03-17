@@ -16,7 +16,7 @@ export default function LinkGuestOrderPage() {
 
   const token = getStoredToken();
   if (typeof window !== "undefined" && !token) {
-    router.replace("/auth/login");
+    router.replace("/login");
     return null;
   }
 
@@ -39,35 +39,35 @@ export default function LinkGuestOrderPage() {
   }
 
   return (
-    <section className="mx-auto max-w-md space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Link guest order</h1>
-      <p className="text-sm text-slate-400">
+    <section className="mx-auto max-w-xl space-y-6">
+      <h1 className="font-[var(--font-heading)] text-h1 text-white">Link guest order</h1>
+      <p className="text-body text-brand-muted">
         Enter the order number from your guest checkout confirmation. The order&apos;s guest email must match your account email.
       </p>
-      <form onSubmit={onSubmit} className="space-y-4 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-        {error && <p className="text-sm text-amber-300">{error}</p>}
-        {success && <p className="text-sm text-emerald-300">{success}</p>}
+      <form onSubmit={onSubmit} className="panel space-y-4 p-6">
+        {error && <p className="text-sm text-red-200">{error}</p>}
+        {success && <p className="text-sm text-brand-accent">{success}</p>}
         <div>
-          <label className="block text-sm font-medium text-slate-200">Order number</label>
+          <label className="block text-sm font-medium text-brand-muted">Order number</label>
           <input
             type="text"
             value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
             placeholder="e.g. ORD-20250316-ABCD"
-            className="mt-1 w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 font-mono text-slate-100"
+            className="form-input mt-1 font-mono"
           />
         </div>
         <button
           type="submit"
           disabled={submitting || !orderNumber.trim()}
-          className="w-full rounded bg-emerald-600 py-2 font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
+          className="btn-primary w-full py-2.5"
         >
           {submitting ? "Linking…" : "Link order"}
         </button>
       </form>
       <p>
-        <Link href="/account/orders" className="text-sm text-slate-400 hover:text-slate-200">
-          ← Back to My orders
+        <Link href="/orders" className="btn-secondary">
+          Back to My orders
         </Link>
       </p>
     </section>

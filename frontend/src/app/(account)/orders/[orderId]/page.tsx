@@ -41,7 +41,7 @@ export default function OrderDetailPage() {
   useEffect(() => {
     const token = getStoredToken();
     if (!token) {
-      router.replace("/auth/login");
+      router.replace("/login");
       return;
     }
     Promise.all([
@@ -88,8 +88,8 @@ export default function OrderDetailPage() {
     }
   }
 
-  if (loading) return <section><h1 className="text-2xl font-semibold">Order</h1><p className="text-slate-400">Loading…</p></section>;
-  if (error && !order) return <section><p className="text-amber-300">{error}</p><Link href="/account/orders">← My orders</Link></section>;
+  if (loading) return <section><h1 className="font-[var(--font-heading)] text-h1 text-white">Order</h1><p className="text-brand-muted">Loading…</p></section>;
+  if (error && !order) return <section><p className="text-red-200">{error}</p><Link href="/orders" className="btn-secondary">My orders</Link></section>;
   if (!order) return null;
 
   const workspace = order.projectWorkspaces?.[0];
@@ -98,25 +98,25 @@ export default function OrderDetailPage() {
   return (
     <section className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Order {order.orderNumber}</h1>
-        <Link href="/account/orders" className="text-sm text-slate-400 hover:text-slate-200">← My orders</Link>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Order {order.orderNumber}</h1>
+        <Link href="/orders" className="btn-secondary">My orders</Link>
       </div>
 
-      {error && <p className="text-sm text-amber-300">{error}</p>}
+      {error && <p className="text-sm text-red-200">{error}</p>}
 
-      <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-        <p className="text-sm text-slate-400">Status: {order.lifecycleStage} · Payment: {order.paymentState}</p>
+      <div className="panel p-4">
+        <p className="text-sm text-brand-muted">Status: {order.lifecycleStage} · Payment: {order.paymentState}</p>
       </div>
 
       {approval && typeof approval === "object" && "status" in approval && (approval as { status: string }).status === "pending" ? (
-        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4">
-          <h2 className="font-medium text-amber-200">Approval requested</h2>
-          <p className="mt-1 text-sm text-slate-300">Respond to this approval request.</p>
+        <div className="rounded-panel border border-brand-accent/40 bg-brand-accent/10 p-4">
+          <h2 className="font-medium text-brand-accent">Approval requested</h2>
+          <p className="mt-1 text-sm text-brand-muted">Respond to this approval request.</p>
           <textarea
             value={approvalNotes}
             onChange={(e) => setApprovalNotes(e.target.value)}
             placeholder="Notes (optional)"
-            className="mt-2 w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100"
+            className="form-input mt-2"
             rows={2}
           />
           <div className="mt-2 flex gap-2">
@@ -124,7 +124,7 @@ export default function OrderDetailPage() {
               type="button"
               onClick={() => handleApprovalResponse(true)}
               disabled={approvalSubmitting}
-              className="rounded bg-emerald-600 px-3 py-1.5 text-sm text-white hover:bg-emerald-500 disabled:opacity-50"
+              className="btn-primary disabled:opacity-50"
             >
               Approve
             </button>
@@ -132,7 +132,7 @@ export default function OrderDetailPage() {
               type="button"
               onClick={() => handleApprovalResponse(false)}
               disabled={approvalSubmitting}
-              className="rounded border border-slate-600 px-3 py-1.5 text-sm text-slate-200 hover:bg-slate-800 disabled:opacity-50"
+              className="btn-secondary disabled:opacity-50"
             >
               Reject
             </button>
@@ -141,9 +141,9 @@ export default function OrderDetailPage() {
       ) : null}
 
       {order.timeline && order.timeline.length > 0 && (
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <h2 className="font-medium text-slate-200">Progress</h2>
-          <ul className="mt-2 space-y-1 text-sm text-slate-300">
+        <div className="panel p-4">
+          <h2 className="font-medium text-brand-text">Progress</h2>
+          <ul className="mt-2 space-y-1 text-sm text-brand-muted">
             {order.timeline.map((event, i) => (
               <li key={i}>{event.label} — {new Date(event.at).toLocaleString()}</li>
             ))}
@@ -151,12 +151,12 @@ export default function OrderDetailPage() {
         </div>
       )}
 
-      <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-        <h2 className="font-medium text-slate-200">Workspace & comments</h2>
-        <ul className="mt-2 space-y-2 text-sm text-slate-300">
+      <div className="panel-soft p-4">
+        <h2 className="font-medium text-brand-text">Workspace & comments</h2>
+        <ul className="mt-2 space-y-2 text-sm text-brand-muted">
           {comments.map((c: { id: string; body: string; authorType: string; createdAt: string }) => (
-            <li key={c.id} className="rounded border border-slate-800 p-2">
-              {c.body} <span className="text-slate-500">— {c.authorType}</span>
+            <li key={c.id} className="rounded-lg border border-brand-border p-2">
+              {c.body} <span className="text-brand-subtle">— {c.authorType}</span>
             </li>
           ))}
         </ul>
@@ -166,13 +166,13 @@ export default function OrderDetailPage() {
             value={commentBody}
             onChange={(e) => setCommentBody(e.target.value)}
             placeholder="Add a comment"
-            className="flex-1 rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100"
+            className="form-input flex-1"
           />
           <button
             type="button"
             onClick={handleAddComment}
             disabled={commentSubmitting || !commentBody.trim()}
-            className="rounded bg-slate-700 px-3 py-2 text-sm text-slate-200 hover:bg-slate-600 disabled:opacity-50"
+            className="btn-secondary disabled:opacity-50"
           >
             Add
           </button>
@@ -191,7 +191,7 @@ export default function OrderDetailPage() {
               setError(err instanceof Error ? err.message : "Failed");
             }
           }}
-          className="rounded border border-slate-600 px-3 py-1.5 text-sm text-slate-200 hover:bg-slate-800"
+          className="btn-secondary"
         >
           Request revision
         </button>
@@ -206,7 +206,7 @@ export default function OrderDetailPage() {
               setError(err instanceof Error ? err.message : "Failed");
             }
           }}
-          className="rounded border border-slate-600 px-3 py-1.5 text-sm text-slate-200 hover:bg-slate-800"
+          className="btn-secondary"
         >
           Request reprint
         </button>

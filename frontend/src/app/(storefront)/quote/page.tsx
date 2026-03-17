@@ -72,25 +72,25 @@ export default function QuotePage() {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold tracking-tight">Instant quote</h1>
-        <p className="max-w-2xl text-sm text-slate-300">
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Instant quote</h1>
+        <p className="max-w-2xl text-body text-brand-muted">
           Upload one or more 3D models (STL, OBJ, 3MF, AMF, PLY, WRL, VRML, GLB, GLTF, USD,
           USDZ, USDA, USDC, ZIP) and we&apos;ll estimate price, feasibility, and lead time.
         </p>
       </div>
 
-      <form onSubmit={onSubmit} className="space-y-4 rounded-lg border border-slate-800 bg-slate-900/60 p-4">
+      <form onSubmit={onSubmit} className="panel space-y-6 p-6">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-slate-100">
+          <label className="text-sm font-semibold text-brand-text">
             Upload files
             <input
               type="file"
               multiple
               onChange={onFilesChange}
-              className="mt-2 block w-full text-sm text-slate-200"
+              className="form-input mt-2 block"
             />
           </label>
-          <p className="text-xs text-slate-400">
+          <p className="text-caption text-brand-subtle">
             Supported formats: STL, OBJ, 3MF, AMF, PLY, WRL, VRML, GLB, GLTF, USD, USDZ, USDA,
             USDC, ZIP
           </p>
@@ -98,19 +98,19 @@ export default function QuotePage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-100">
+            <label className="text-sm font-semibold text-brand-text">
               Quantity
               <input
                 type="number"
                 min={1}
                 value={quantity}
                 onChange={(event) => setQuantity(Number(event.target.value) || 1)}
-                className="mt-1 block w-24 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-sm text-slate-100"
+                className="form-input mt-1 block w-24"
               />
             </label>
           </div>
 
-          <div className="rounded border border-slate-800 bg-slate-900/40 p-3 text-xs text-slate-400">
+          <div className="rounded-lg border border-brand-border bg-brand-bg/40 p-3 text-caption text-brand-subtle">
             Material, quality, tolerance, and turnaround are currently fixed to sensible
             defaults. Once admin-configured option catalogs are available, this section will
             render dynamic selectors.
@@ -121,7 +121,7 @@ export default function QuotePage() {
           <button
             type="submit"
             disabled={submitting || !files.length}
-            className="inline-flex items-center rounded bg-emerald-500 px-4 py-2 text-sm font-medium text-slate-950 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-emerald-800"
+            className="btn-primary"
           >
             {submitting ? "Calculating..." : "Get estimate"}
           </button>
@@ -161,13 +161,13 @@ export default function QuotePage() {
                     setAddingToCart(false);
                   }
                 }}
-                className="inline-flex items-center rounded border border-emerald-500 px-4 py-2 text-sm font-medium text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50"
+                className="btn-secondary border-brand-primary/50 text-brand-text disabled:opacity-50"
               >
                 {addingToCart ? "Adding…" : "Add to cart"}
               </button>
               <Link
                 href="/checkout"
-                className="inline-flex items-center rounded border border-slate-600 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-slate-800/60"
+                className="btn-secondary"
               >
                 Continue to checkout
               </Link>
@@ -175,23 +175,23 @@ export default function QuotePage() {
           )}
         </div>
 
-        {error && <p className="text-sm text-red-400">{error}</p>}
+        {error && <p className="text-sm text-brand-danger">{error}</p>}
         {nextStepMessage && !error && (
-          <p className="text-xs text-slate-300">{nextStepMessage}</p>
+          <p className="text-caption text-brand-muted">{nextStepMessage}</p>
         )}
       </form>
 
       {quote && (
-        <div className="space-y-3 rounded-lg border border-emerald-400/40 bg-slate-900/60 p-4">
-          <h2 className="text-lg font-medium text-emerald-300">Estimate</h2>
-          <p className="text-sm text-slate-200">
+        <div className="panel space-y-3 p-4">
+          <h2 className="font-[var(--font-heading)] text-h2 text-brand-accent">Estimate</h2>
+          <p className="text-body text-brand-text">
             Total: {quote.totalPrice} {quote.currency}
           </p>
-          <ul className="space-y-2 text-sm text-slate-200">
+          <ul className="space-y-2 text-sm text-brand-text">
             {quote.jobs.map((job, index) => (
               <li
                 key={(job as { id?: string }).id ?? `job-${index}`}
-                className="rounded border border-slate-800 bg-slate-900/40 p-2"
+                className="rounded-lg border border-brand-border bg-brand-surfaceSoft p-3"
               >
                 <div>Unit price: {job.unitPrice} {quote.currency}</div>
                 <div>Line total: {job.totalPrice} {quote.currency}</div>
@@ -203,7 +203,7 @@ export default function QuotePage() {
               </li>
             ))}
           </ul>
-          <div className="mt-2 text-xs text-slate-400">
+          <div className="mt-2 text-caption text-brand-subtle">
             Use &quot;Add to cart&quot; to add this quote to your cart, or continue to checkout.
           </div>
         </div>

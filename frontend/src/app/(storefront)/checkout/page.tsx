@@ -34,10 +34,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     async function load() {
       try {
-        const [cartData, methods] = await Promise.all([
-          getCart(),
-          getPaymentMethods()
-        ]);
+        const [cartData, methods] = await Promise.all([getCart(), getPaymentMethods()]);
         setCart({
           totalCents: cartData.totalCents,
           totalItems: cartData.totalItems,
@@ -77,12 +74,8 @@ export default function CheckoutPage() {
   if (!cart) {
     return (
       <section className="space-y-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Checkout</h1>
-        {error ? (
-          <p className="text-amber-200">{error}</p>
-        ) : (
-          <p className="text-slate-400">Loading…</p>
-        )}
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Checkout</h1>
+        {error ? <p className="text-red-200">{error}</p> : <p className="text-brand-muted">Loading...</p>}
       </section>
     );
   }
@@ -90,12 +83,9 @@ export default function CheckoutPage() {
   if (cart.lines.length === 0) {
     return (
       <section className="space-y-6">
-        <h1 className="text-2xl font-semibold tracking-tight">Checkout</h1>
-        <p className="text-slate-300">Your cart is empty.</p>
-        <Link
-          href="/cart"
-          className="inline-block text-sm font-medium text-emerald-400 hover:text-emerald-300"
-        >
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Checkout</h1>
+        <p className="text-body text-brand-muted">Your cart is empty.</p>
+        <Link href="/cart" className="btn-secondary">
           View cart
         </Link>
       </section>
@@ -105,79 +95,76 @@ export default function CheckoutPage() {
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Checkout</h1>
-        <Link
-          href="/cart"
-          className="text-sm font-medium text-slate-300 hover:text-slate-100"
-        >
-          ← Cart
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Checkout</h1>
+        <Link href="/cart" className="btn-secondary">
+          Back to cart
         </Link>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-200">
+        <div className="rounded-panel border border-brand-danger/40 bg-brand-danger/10 p-3 text-sm text-red-200">
           {error}
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="space-y-6">
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <h2 className="text-sm font-medium text-slate-200">Order total</h2>
-          <p className="mt-1 text-xl font-semibold text-slate-100">
-            {formatCents(cart.totalCents)}
-          </p>
-          <p className="text-xs text-slate-400">{cart.totalItems} items</p>
-        </div>
-
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <h2 className="mb-3 text-sm font-medium text-slate-200">
-            Payment method
-          </h2>
-          <div className="space-y-2">
-            {paymentMethods.map((m) => (
-              <label
-                key={m.method}
-                className="flex cursor-pointer items-center gap-2 rounded border border-slate-700 bg-slate-800/50 px-3 py-2 hover:bg-slate-800"
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value={m.method}
-                  checked={selectedMethod === m.method}
-                  onChange={() => setSelectedMethod(m.method)}
-                  className="text-emerald-500"
-                />
-                <span className="capitalize text-slate-200">{m.method}</span>
-              </label>
-            ))}
+      <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div className="space-y-6">
+          <div className="panel p-5">
+            <h2 className="font-[var(--font-heading)] text-h2 text-white">Payment method</h2>
+            <div className="mt-4 space-y-2">
+              {paymentMethods.map((m) => (
+                <label
+                  key={m.method}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-brand-border bg-brand-surfaceSoft px-3 py-2 hover:border-brand-primary/50"
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={m.method}
+                    checked={selectedMethod === m.method}
+                    onChange={() => setSelectedMethod(m.method)}
+                    className="text-brand-primary"
+                  />
+                  <span className="capitalize text-brand-text">{m.method}</span>
+                </label>
+              ))}
+            </div>
+            {paymentMethods.length === 0 && (
+              <p className="mt-2 text-sm text-brand-subtle">No payment methods configured. Contact support.</p>
+            )}
           </div>
-          {paymentMethods.length === 0 && (
-            <p className="text-sm text-slate-400">
-              No payment methods configured. Contact support.
-            </p>
-          )}
+
+          <div className="panel-soft p-5">
+            <h2 className="font-[var(--font-heading)] text-h2 text-white">Guest checkout (optional)</h2>
+            <input
+              type="email"
+              placeholder="Email for order confirmation"
+              value={guestEmail}
+              onChange={(e) => setGuestEmail(e.target.value)}
+              className="form-input mt-3"
+            />
+          </div>
         </div>
 
-        <div className="rounded-lg border border-slate-800 bg-slate-900/60 p-4">
-          <h2 className="mb-3 text-sm font-medium text-slate-200">
-            Guest checkout (optional)
-          </h2>
-          <input
-            type="email"
-            placeholder="Email for order confirmation"
-            value={guestEmail}
-            onChange={(e) => setGuestEmail(e.target.value)}
-            className="w-full rounded border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder:text-slate-500"
-          />
-        </div>
+        <div className="space-y-4">
+          <div className="panel p-5">
+            <h2 className="text-sm font-semibold text-brand-muted">Order total</h2>
+            <p className="mt-1 text-3xl font-semibold text-brand-accent">{formatCents(cart.totalCents)}</p>
+            <p className="text-caption text-brand-subtle">{cart.totalItems} items</p>
+          </div>
 
-        <button
-          type="submit"
-          disabled={submitting || paymentMethods.length === 0}
-          className="w-full rounded bg-emerald-600 py-3 font-medium text-white hover:bg-emerald-500 disabled:opacity-50"
-        >
-          {submitting ? "Processing…" : "Place order"}
-        </button>
+          <button
+            type="submit"
+            disabled={submitting || paymentMethods.length === 0}
+            className="btn-primary w-full py-3"
+          >
+            {submitting ? "Processing..." : "Place order"}
+          </button>
+
+          <p className="text-caption text-brand-subtle">
+            By placing your order, you confirm production details and agree to the current turnaround and fulfillment terms.
+          </p>
+        </div>
       </form>
     </section>
   );

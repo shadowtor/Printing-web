@@ -18,26 +18,26 @@ export default function AdminPricingPage() {
   if (loading) {
     return (
       <section className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Pricing</h1>
-        <p className="text-slate-400">Loading…</p>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Pricing</h1>
+        <p className="text-brand-muted">Loading…</p>
       </section>
     );
   }
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Pricing</h1>
-      {error && <p className="text-amber-300">{error}</p>}
-      <div>
-        <h2 className="text-lg font-medium text-slate-200 mb-2">Pricing profiles</h2>
+      <h1 className="font-[var(--font-heading)] text-h1 text-white">Pricing</h1>
+      {error && <p className="text-red-200">{error}</p>}
+      <div className="panel p-4">
+        <h2 className="mb-2 text-lg font-medium text-brand-text">Pricing profiles</h2>
         {profiles.length === 0 ? (
-          <p className="text-slate-400">No pricing profiles.</p>
+          <p className="text-brand-muted">No pricing profiles.</p>
         ) : (
           <ul className="space-y-2">
             {(profiles as { id: string; name?: string; active?: boolean }[]).map((p) => (
-              <li key={p.id} className="rounded border border-slate-800 bg-slate-900/60 px-3 py-2">
-                <span className="font-medium text-slate-200">{p.name ?? p.id}</span>
-                {p.active === false && <span className="ml-2 text-slate-500">(inactive)</span>}
+              <li key={p.id} className="rounded-lg border border-brand-border bg-brand-surfaceSoft px-3 py-2">
+                <span className="font-medium text-brand-text">{p.name ?? p.id}</span>
+                {p.active === false && <span className="ml-2 text-brand-subtle">(inactive)</span>}
               </li>
             ))}
           </ul>

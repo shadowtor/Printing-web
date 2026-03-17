@@ -19,18 +19,18 @@ export default function AdminQueuesPage() {
   if (loading) {
     return (
       <section className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Queues</h1>
-        <p className="text-slate-400">Loading…</p>
+        <h1 className="font-[var(--font-heading)] text-h1 text-white">Queues</h1>
+        <p className="text-brand-muted">Loading…</p>
       </section>
     );
   }
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Production queues</h1>
-      {error && <p className="text-amber-300">{error}</p>}
+      <h1 className="font-[var(--font-heading)] text-h1 text-white">Production queues</h1>
+      {error && <p className="text-red-200">{error}</p>}
       {queues.length === 0 && !error && (
-        <p className="text-slate-400">No queues.</p>
+        <p className="text-brand-muted">No queues.</p>
       )}
       {queues.length > 0 && (
         <ul className="space-y-3">
@@ -38,12 +38,12 @@ export default function AdminQueuesPage() {
             <li key={q.id}>
               <Link
                 href={`/admin/queues/${q.id}`}
-                className="block rounded-lg border border-slate-800 bg-slate-900/60 p-4 transition hover:border-slate-700"
+                className="panel-soft block p-4 transition hover:border-brand-primary/40"
               >
-                <span className="font-medium text-slate-200">{q.name ?? q.id}</span>
-                {q.active === false && <span className="ml-2 text-slate-500">(inactive)</span>}
+                <span className="font-medium text-brand-text">{q.name ?? q.id}</span>
+                {q.active === false && <span className="ml-2 text-brand-subtle">(inactive)</span>}
                 {Array.isArray(q.items) && (
-                  <span className="ml-2 text-sm text-slate-400">{q.items.length} items</span>
+                  <span className="ml-2 text-sm text-brand-muted">{q.items.length} items</span>
                 )}
               </Link>
             </li>

@@ -7,6 +7,7 @@ const envSchema = z.object({
   CONNECTOR_API_URL: z.string().url().optional(),
   CONNECTOR_API_KEY: z.string().optional(),
   CONNECTOR_WEBHOOK_SECRET: z.string().optional(),
+  REDIS_URL: z.string().url().optional(),
   PORT: z
     .string()
     .transform((v) => parseInt(v, 10))

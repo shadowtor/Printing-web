@@ -6,6 +6,7 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import { env } from "../config/index.js";
 import { registerErrorHandler } from "./middleware/error-handler.js";
+import { registerRateLimit } from "./middleware/rate-limit.js";
 import { registerAuthHooks } from "./middleware/auth.js";
 import { registerHealthRoutes } from "./routes/health.js";
 import { registerCatalogRoutes } from "./routes/catalog.js";
@@ -35,6 +36,7 @@ export async function buildServer() {
   await app.register(helmet, { contentSecurityPolicy: false }); // CSP can be enabled and tuned per frontend
 
   await registerErrorHandler(app);
+  await registerRateLimit(app);
   await registerAuthHooks(app);
 
   await registerHealthRoutes(app);

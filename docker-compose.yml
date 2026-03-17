@@ -1,33 +1,52 @@
+# Production. Usage: docker compose -f docker-compose.prod.yml up -d
+# Set ADMIN_SECRET, CONNECTOR_*, Stripe/PayPal secrets via env file or environment.
+
 services:
   db:
     image: postgres:18
-    restart: unless-stopped
+    restart: always
     environment:
       POSTGRES_USER: printing
-      POSTGRES_PASSWORD: printing
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-printing}
       POSTGRES_DB: printing
-    ports:
-      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql
+    # Expose only if you need direct DB access (e.g. backups). Omit in locked-down deployments.
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    # Expose only if needed for external access. Omit to keep Redis internal.
+    ports:
+      - "6379:6379"
 
   backend:
     build:
       context: ./backend
+    restart: always
     environment:
-      DATABASE_URL: postgres://printing:printing@db:5432/printing
-      NODE_ENV: development
+      DATABASE_URL: ${DATABASE_URL:-postgres://printing:printing@db:5432/printing}
+      NODE_ENV: production
       PORT: 3000
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      ADMIN_SECRET: ${ADMIN_SECRET}
     depends_on:
       - db
+      - redis
     ports:
       - "3000:3000"
 
   frontend:
     build:
       context: ./frontend
+    restart: always
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-http://backend:3000/api/v1}
     depends_on:
       - backend
     ports:
@@ -35,4 +54,4 @@ services:
 
 volumes:
   db-data:
-
+  redis-data:

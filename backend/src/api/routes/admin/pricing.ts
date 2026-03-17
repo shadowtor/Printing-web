@@ -15,6 +15,7 @@ import {
   type QuoteRuleUpdateInput
 } from "../../../models/pricing.js";
 import { requireAdmin } from "../../middleware/admin-auth.js";
+import { cacheInvalidatePrefix } from "../../../lib/cache.js";
 
 const prefix = "/api/v1/admin";
 
@@ -38,6 +39,7 @@ export async function registerAdminPricingRoutes(app: FastifyInstance) {
       return reply.status(400).send({ code: "invalid_request", message: "name is required." });
     }
     const profile = await createPricingProfile(body);
+    await cacheInvalidatePrefix("pricing");
     return reply.status(201).send(profile);
   });
 
@@ -46,12 +48,14 @@ export async function registerAdminPricingRoutes(app: FastifyInstance) {
     { preHandler },
     async (request, reply) => {
       const profile = await updatePricingProfile(request.params.id, request.body ?? {});
+      await cacheInvalidatePrefix("pricing");
       return reply.send(profile);
     }
   );
 
   app.delete<{ Params: { id: string } }>(`${prefix}/pricing/profiles/:id`, { preHandler }, async (request, reply) => {
     await deletePricingProfile(request.params.id);
+    await cacheInvalidatePrefix("pricing");
     return reply.status(204).send();
   });
 
@@ -70,6 +74,7 @@ export async function registerAdminPricingRoutes(app: FastifyInstance) {
       });
     }
     const rule = await createQuoteRule(body);
+    await cacheInvalidatePrefix("pricing");
     return reply.status(201).send(rule);
   });
 
@@ -78,12 +83,14 @@ export async function registerAdminPricingRoutes(app: FastifyInstance) {
     { preHandler },
     async (request, reply) => {
       const rule = await updateQuoteRule(request.params.id, request.body ?? {});
+      await cacheInvalidatePrefix("pricing");
       return reply.send(rule);
     }
   );
 
   app.delete<{ Params: { id: string } }>(`${prefix}/pricing/rules/:id`, { preHandler }, async (request, reply) => {
     await deleteQuoteRule(request.params.id);
+    await cacheInvalidatePrefix("pricing");
     return reply.status(204).send();
   });
 }

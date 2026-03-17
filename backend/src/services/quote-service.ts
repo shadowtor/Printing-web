@@ -1,6 +1,8 @@
 import type { QuoteRule } from "../models/pricing.js";
 import { findMatchingQuoteRules } from "../models/pricing.js";
 import { createJob, createQuote, updateQuote, type Job } from "../models/quote.js";
+import { cacheGet, cacheSet, CACHE_TTL } from "../lib/cache.js";
+import type { QuoteRuleQuery } from "../models/pricing.js";
 
 /**
  * Input for estimating a single job line (one product configuration).
@@ -78,19 +80,37 @@ function pickBestRule(rules: QuoteRule[], input: EstimateJobInput): QuoteRule {
   return best;
 }
 
+function pricingQueryCacheKey(query: QuoteRuleQuery): string {
+  const canonical = {
+    pricingProfileId: query.pricingProfileId,
+    materialId: query.materialId ?? null,
+    qualityId: query.qualityId ?? null,
+    toleranceClassId: query.toleranceClassId ?? null,
+    turnaroundProfileId: query.turnaroundProfileId ?? null,
+    quantity: query.quantity ?? null
+  };
+  return `pricing:match:${JSON.stringify(canonical)}`;
+}
+
 /**
  * Estimate pricing, feasibility, and lead time for a single job line.
  * Uses the first matching QuoteRule (or best match when multiple match).
  */
 export async function estimateJob(input: EstimateJobInput): Promise<EstimateJobResult> {
-  const rules = await findMatchingQuoteRules({
+  const query: QuoteRuleQuery = {
     pricingProfileId: input.pricingProfileId,
     materialId: input.materialId,
     qualityId: input.qualityId,
     toleranceClassId: input.toleranceClassId,
     turnaroundProfileId: input.turnaroundProfileId,
     quantity: input.quantity
-  });
+  };
+  const cacheKey = pricingQueryCacheKey(query);
+  let rules: QuoteRule[] | null = await cacheGet<QuoteRule[]>(cacheKey);
+  if (rules == null) {
+    rules = await findMatchingQuoteRules(query);
+    await cacheSet(cacheKey, rules, CACHE_TTL.PRICING_SECONDS);
+  }
 
   const rule = pickBestRule(rules, input);
   const totalPrice = rule.unitPrice * input.quantity;

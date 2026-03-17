@@ -25,6 +25,7 @@ How to install and run the Printing-web platform locally.
 | `CONNECTOR_API_URL` | No | Base URL for the external connector service (used by admin dispatch endpoint) |
 | `CONNECTOR_API_KEY` | No | Bearer token used by backend when calling connector APIs |
 | `CONNECTOR_WEBHOOK_SECRET` | No | Shared secret for inbound connector webhooks (`Authorization: Bearer <secret>`) |
+| `REDIS_URL` | No | Redis URL for cache and rate limiting (e.g. `redis://localhost:6379`). If unset, backend runs without cache and without rate limiting. |
 | `UPLOAD_DIR` | No | Directory for uploaded files (defaults to app default) |
 | `MAX_UPLOAD_BYTES` | No | Max upload size in bytes |
 
@@ -54,9 +55,15 @@ From the repository root:
    docker-compose up -d frontend   # optional
    ```
 
-With the default [docker-compose.yml](../docker-compose.yml):
+Compose files:
+
+- **Local testing** (default): [docker-compose.yml](../docker-compose.yml) or [docker-compose.local.yml](../docker-compose.local.yml) — development settings, `NODE_ENV=development`, all ports exposed. Use: `docker compose up -d` (or `docker compose -f docker-compose.local.yml up -d`).
+- **Production**: [docker-compose.prod.yml](../docker-compose.prod.yml) — `NODE_ENV=production`, `restart: always`. Set `ADMIN_SECRET`, `POSTGRES_PASSWORD`, and other secrets via env file or environment. Use: `docker compose -f docker-compose.prod.yml up -d`.
+
+With the default compose (local):
 
 - **db**: PostgreSQL 18 on port 5432, database `printing`, user `printing`.
+- **redis**: Redis 7 on port 6379 (optional; backend uses it for cache/rate limit when `REDIS_URL` is set).
 - **backend**: Built from `./backend`, port **3000**, env from Compose (e.g. `DATABASE_URL=postgres://printing:printing@db:5432/printing`).
 - **frontend**: Built from `./frontend`, port **3001** (mapped from container 3000).
 

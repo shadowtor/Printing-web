@@ -22,6 +22,7 @@ import {
   type ModelCreateInput
 } from "../../../models/product-template.js";
 import { requireAdmin } from "../../middleware/admin-auth.js";
+import { cacheInvalidatePrefix } from "../../../lib/cache.js";
 
 const prefix = "/api/v1/admin";
 
@@ -45,6 +46,7 @@ export async function registerAdminCatalogRoutes(app: FastifyInstance) {
       return reply.status(400).send({ code: "invalid_request", message: "slug, name, and description are required." });
     }
     const item = await createCatalogItem(body);
+    await cacheInvalidatePrefix("catalog");
     return reply.status(201).send(item);
   });
 
@@ -53,12 +55,14 @@ export async function registerAdminCatalogRoutes(app: FastifyInstance) {
     { preHandler },
     async (request, reply) => {
       const item = await updateCatalogItem(request.params.id, request.body ?? {});
+      await cacheInvalidatePrefix("catalog");
       return reply.send(item);
     }
   );
 
   app.delete<{ Params: { id: string } }>(`${prefix}/catalog/items/:id`, { preHandler }, async (request, reply) => {
     await deleteCatalogItem(request.params.id);
+    await cacheInvalidatePrefix("catalog");
     return reply.status(204).send();
   });
 
